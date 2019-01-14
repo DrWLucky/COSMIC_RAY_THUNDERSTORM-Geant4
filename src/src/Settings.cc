@@ -10,7 +10,7 @@ namespace Settings
     //
     G4long NB_EVENT = 0; // initialisation is important here
 
-    const double ENERGY_MIN = 300. * keV;
+    const double ENERGY_MIN = 50. * keV;
     const double ENERGY_MAX = 100. * MeV;
 
     // variables storing simulation input parameters
@@ -24,7 +24,7 @@ namespace Settings
 
     std::vector<G4double> RECORD_ALTITUDES; // km
 
-    G4double TILT = 0.0 * degree;
+    const G4double TILT = 0.0 * degree;
 
     const G4double CLOUD_TOP_ALTITUDE = 13.; //km, only used for ABOVE scenario
 

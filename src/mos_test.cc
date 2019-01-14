@@ -68,11 +68,10 @@ int main(int argc, char **argv)
             Settings::EFIELD_REGION_ALT_CENTER = std::stod(argv[2]);
             Settings::EFIELD_REGION_LEN = std::stod(argv[3]);
             Settings::POTENTIAL_VALUE    = std::stod(argv[4]);
-            Settings::TILT    = std::stod(argv[5]);
 
             Settings::RECORD_ALTITUDES.clear();
 
-            for (int kk = 6; kk < argc; ++kk) // loop over all requested record altitudes
+            for (int kk = 5; kk < argc; ++kk) // loop over all requested record altitudes
                 {
                     Settings::RECORD_ALTITUDES.push_back(std::stod(argv[kk]));
                     //                    G4cout << argv[kk] << G4endl;

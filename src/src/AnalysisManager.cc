@@ -134,6 +134,10 @@ G4int AnalysisManager::NB_OUTPUT() const
 void AnalysisManager::add_NB_OUTPUT()
 {
     NB_OUTPUT_++;
+
+#ifndef NDEBUG // debug mode
+    G4cout <<  "Number of outputs : " << NB_OUTPUT_ << G4endl;
+#endif
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -149,7 +153,6 @@ void AnalysisManager::write_output_file_endOf_program()
                                 << " " << Settings::EFIELD_REGION_ALT_CENTER
                                 << " " << Settings::EFIELD_REGION_LEN
                                 << " " << Settings::POTENTIAL_VALUE
-                                << " " << Settings::TILT
                                 << " " << Settings::RREA_PART_NB_LIMIT_HAS_BEEN_REACHED;
 
             for (uint i_alt = 0; i_alt < Settings::RECORD_ALTITUDES.size(); ++i_alt)

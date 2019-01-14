@@ -26,19 +26,19 @@ seedd = random.randint(1,1000000000)
 
 efield_altitudes = [12.0]# kilometers, record altitude
 
-scales = [1.5436, 1.9256, 2.4605, 3.2461, 4.4152, 6.0826, 8.3489, 11.4043]
+altitudes = [4.,      5.,     6.,     7.,     8.,     9.,     10.,     11.,     12.,     13.,      14.,      15.,      16.]
+scales =    [1.5434,  1.7199, 1.9253, 2.1686, 2.4604, 2.8134, 3.2454,  3.7742,  4.4144,  5.1808,   6.0821,   7.1335,   8.3483]
 
-efield_sizes = [2.0] # does not matter if efield_altitudes > 20
+altitudes = np.array(altitudes)
+scales = np.array(scales)
+
+efield_sizes = [1.0, 2.0] # does not matter if efield_altitudes > 20
 
 #potential_list = [40., 60., 80. ,100., 120., 140., 160.]
-record_altitudes = [13.0]
 
-efield_list = [0, 0.25, 0.5, 0.75, 1., 1.25, 1.5] # fraction of RREA threshold
-
-# converting fraction of RREA threshold to potential
-
-tilt_list = np.array([0.]) # does not matter if efield_altitudes > 20
-#tilt_list = np.array([0.,25.,45.])
+# 0.284 MV/m
+RREA_thres = 284.0 # MV/km
+frac_rrea_thres_list = np.array([0.0, 0.25, 0.5, 0.75, 1., 1.25, 1.5]) # fraction of RREA threshold
 
 if ("iftrom" in computer_name) or ("7370" in computer_name) or ("sarria-pc" in computer_name):
     nb_run = 1
@@ -59,21 +59,25 @@ for _ in range(nb_run):
     for size in efield_sizes:
         for alti_e in efield_altitudes:
         
-            potential_list_0 = np.array([200.0, 225.])
+            scale_fact = np.interp(alti_e, altitudes, scales)
+            # converting "fraction of RREA" threshold to potential
+            potential_list = RREA_thres * frac_rrea_thres_list * size / scale_fact
             
-            for pot in potential_list_0:
-                for tilt in tilt_list:
-                    commands.append(excecutable + ' ' + str(seedd) + ' ' + str(nb_record_per_run) 
-                                    + ' ' + str(alti_e) + ' ' + str(size) + ' ' + str(pot) + ' ' + str(tilt)
-                                    + ' ' + str(record_altitudes[0]))
-                    seedd+=1
+            print(potential_list)
+            
+            record_altitudes = [alti_e, alti_e-size/2.0, alti_e+size/2.0]
+            
+            for pot in potential_list:
+                commands.append(excecutable + ' ' + str(nb_record_per_run) 
+                                + ' ' + str(alti_e) + ' ' + str(size) + ' ' + str(pot)
+                                + ' ' + str(record_altitudes[0]) + ' ' + str(record_altitudes[1]) + ' ' + str(record_altitudes[2]))
 
 ################################################################################
 print(len(commands))
 print(commands[0])
 #############
 
-nb_thread = int(4) # number of threads (cpu) to run
+nb_thread = int(1) # number of threads (cpu) to run
 
 commands2 = commands
 

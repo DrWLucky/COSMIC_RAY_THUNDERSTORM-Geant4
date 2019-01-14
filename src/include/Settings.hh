@@ -37,7 +37,7 @@ namespace Settings
     extern const G4double latitude;
     extern const G4double drOverR;
 
-    extern G4double TILT;
+    extern const G4double TILT;
 
     extern const bool USE_MAX_STEP_FOR_EFIELD;
     extern const G4double MAX_STEP_INSIDE_EFIELD;

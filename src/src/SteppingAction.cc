@@ -153,18 +153,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
                     //                    const G4int ID_part = aStep->GetTrack()->GetTrackID();
                     const G4double momy = thePrePoint->GetMomentumDirection().y();
 
-                    // WARNING : PARTICLES ARE ALLOWED TO BE RECORED TWO TIMES IF COMING FROM DIFFERENT DIRECTIONS
-
-                    G4int sign_momy = -1;
-
-                    if (momy > 0.0)
-                        {
-                            sign_momy = 1;
-                        }
-                    else
-                        {
-                            sign_momy = -1;
-                        }
+                    // WARNING : PARTICLES ARE ALLOWED TO BE RECORED SEVERAL TIMES
 
                     if (ener > Settings::ENERGY_MIN && ener < Settings::ENERGY_MAX)
                         //            if (aStep->GetTrack()->GetKineticEnergy() > Settings::ENERGY_MIN)
