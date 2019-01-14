@@ -141,110 +141,93 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep)
     const G4double pre_y = aStep->GetPreStepPoint()->GetPosition().y() / km;
     const G4double post_y = aStep->GetPostStepPoint()->GetPosition().y() / km;
 
-    const G4double rec_alt = Settings::RECORD_ALTITUDES[0];
-
-    if ((pre_y >= rec_alt && post_y < rec_alt) || (pre_y <= rec_alt && post_y > rec_alt)) // particle is crossing 20 km layer
+    for (uint i_alt = 0; i_alt < Settings::RECORD_ALTITUDES.size(); ++i_alt)
         {
-            //    if (thePrePoint->GetStepStatus() == fGeomBoundary) // if the particle has just entered the volume ; should not be necessary, but won't hurt
-            //        {
-            const G4double ener = thePrePoint->GetKineticEnergy();
-            const G4int ID_part = aStep->GetTrack()->GetTrackID();
-            const G4double momy = thePrePoint->GetMomentumDirection().y();
+            G4double rec_alt = Settings::RECORD_ALTITUDES[i_alt];
 
-            // WARNING : PARTICLES ARE ALLOWED TO BE RECORED TWO TIMES IF COMING FROM DIFFERENT DIRECTIONS
-
-            G4int sign_momy = -1;
-
-            if (momy > 0.0)
+            if ((pre_y >= rec_alt && post_y < rec_alt) || (pre_y <= rec_alt && post_y > rec_alt)) // particle is crossing 20 km layer
                 {
-                    sign_momy = 1;
-                }
-            else
-                {
-                    sign_momy = -1;
-                }
+                    //    if (thePrePoint->GetStepStatus() == fGeomBoundary) // if the particle has just entered the volume ; should not be necessary, but won't hurt
+                    //        {
+                    const G4double ener = thePrePoint->GetKineticEnergy();
+                    //                    const G4int ID_part = aStep->GetTrack()->GetTrackID();
+                    const G4double momy = thePrePoint->GetMomentumDirection().y();
 
-            detected_part det_part;
-            det_part.direction = sign_momy;
-            det_part.ID = ID_part;
+                    // WARNING : PARTICLES ARE ALLOWED TO BE RECORED TWO TIMES IF COMING FROM DIFFERENT DIRECTIONS
 
-            if (ener > Settings::ENERGY_MIN && ener < Settings::ENERGY_MAX && is_not_recorded_ID(det_part))
-                //            if (aStep->GetTrack()->GetKineticEnergy() > Settings::ENERGY_MIN)
-                {
-
-                    if (PDG_nb == 22)
-                        {
-                            analysis->fill_histogram_ener(0, ener);
-                            analysis->fill_histogram_momX(0, thePrePoint->GetMomentumDirection().x());
-                            analysis->fill_histogram_momY(0, thePrePoint->GetMomentumDirection().y());
-                            analysis->fill_histogram_momZ(0, thePrePoint->GetMomentumDirection().z());
-                        }
-
-                    if (PDG_nb == 11)
-                        {
-                            analysis->fill_histogram_ener(1, ener);
-                            analysis->fill_histogram_momX(1, thePrePoint->GetMomentumDirection().x());
-                            analysis->fill_histogram_momY(1, thePrePoint->GetMomentumDirection().y());
-                            analysis->fill_histogram_momZ(1, thePrePoint->GetMomentumDirection().z());
-                        }
-
-                    if (PDG_nb == -11)
-                        {
-                            analysis->fill_histogram_ener(2, ener);
-                            analysis->fill_histogram_momX(2, thePrePoint->GetMomentumDirection().x());
-                            analysis->fill_histogram_momY(2, thePrePoint->GetMomentumDirection().y());
-                            analysis->fill_histogram_momZ(2, thePrePoint->GetMomentumDirection().z());
-                        }
+                    G4int sign_momy = -1;
 
                     if (momy > 0.0)
                         {
-                            if (PDG_nb == 22)
-                                {
-                                    analysis->photon_counter_up++;
-                                }
-                            else if (PDG_nb == 11)
-                                {
-                                    analysis->electron_counter_up++;
-                                }
-                            else if (PDG_nb == -11)
-                                {
-                                    analysis->positron_counter_up++;
-                                }
+                            sign_momy = 1;
                         }
-
-                    if (momy < 0.0)
+                    else
                         {
-                            if (PDG_nb == 22)
-                                {
-                                    analysis->photon_counter_down++;
-                                }
-                            else if (PDG_nb == 11)
-                                {
-                                    analysis->electron_counter_down++;
-                                }
-                            else if (PDG_nb == -11)
-                                {
-                                    analysis->positron_counter_down++;
-                                }
+                            sign_momy = -1;
                         }
 
-                    analysis->add_NB_OUTPUT();
+                    if (ener > Settings::ENERGY_MIN && ener < Settings::ENERGY_MAX)
+                        //            if (aStep->GetTrack()->GetKineticEnergy() > Settings::ENERGY_MIN)
+                        {
 
+                            if (PDG_nb == 22)
+                                {
+                                    analysis->fill_histogram_ener(0, i_alt, ener);
+                                    analysis->fill_histogram_momX(0, i_alt, thePrePoint->GetMomentumDirection().x());
+                                    analysis->fill_histogram_momY(0, i_alt, thePrePoint->GetMomentumDirection().y());
+                                    analysis->fill_histogram_momZ(0, i_alt, thePrePoint->GetMomentumDirection().z());
+                                }
 
+                            if (PDG_nb == 11)
+                                {
+                                    analysis->fill_histogram_ener(1, i_alt, ener);
+                                    analysis->fill_histogram_momX(1, i_alt, thePrePoint->GetMomentumDirection().x());
+                                    analysis->fill_histogram_momY(1, i_alt, thePrePoint->GetMomentumDirection().y());
+                                    analysis->fill_histogram_momZ(1, i_alt, thePrePoint->GetMomentumDirection().z());
+                                }
 
-                    //            analysis->register_particle(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding(),
-                    //                                        ID_part,
-                    //                                        thePrePoint->GetPosition().x() / meter,
-                    //                                        thePrePoint->GetPosition().y() / meter,
-                    //                                        thePrePoint->GetPosition().z() / meter,
-                    //                                        thePrePoint->GetMomentumDirection().x(),
-                    //                                        momy,
-                    //                                        thePrePoint->GetMomentumDirection().z(),
-                    //                                        ener / keV,
-                    //                                        thePrePoint->GetGlobalTime() / microsecond,
-                    //                                        RECORD_ALT_IN_KM);
+                            if (PDG_nb == -11)
+                                {
+                                    analysis->fill_histogram_ener(2, i_alt, ener);
+                                    analysis->fill_histogram_momX(2, i_alt, thePrePoint->GetMomentumDirection().x());
+                                    analysis->fill_histogram_momY(2, i_alt, thePrePoint->GetMomentumDirection().y());
+                                    analysis->fill_histogram_momZ(2, i_alt, thePrePoint->GetMomentumDirection().z());
+                                }
 
-                    RECORDED_LIST.push_back(det_part);
+                            if (momy > 0.0)
+                                {
+                                    if (PDG_nb == 22)
+                                        {
+                                            analysis->photon_counter_up[i_alt]++;
+                                        }
+                                    else if (PDG_nb == 11)
+                                        {
+                                            analysis->electron_counter_up[i_alt]++;
+                                        }
+                                    else if (PDG_nb == -11)
+                                        {
+                                            analysis->positron_counter_up[i_alt]++;
+                                        }
+                                }
+
+                            if (momy < 0.0)
+                                {
+                                    if (PDG_nb == 22)
+                                        {
+                                            analysis->photon_counter_down[i_alt]++;
+                                        }
+                                    else if (PDG_nb == 11)
+                                        {
+                                            analysis->electron_counter_down[i_alt]++;
+                                        }
+                                    else if (PDG_nb == -11)
+                                        {
+                                            analysis->positron_counter_down[i_alt]++;
+                                        }
+                                }
+
+                            analysis->add_NB_OUTPUT();
+                        }
                 }
 
         }
@@ -277,28 +260,4 @@ double SteppingAction::get_wall_time()
 
     gettimeofday(&tv, NULL);
     return tv.tv_sec + (tv.tv_usec / 1000000.0);
-}
-
-
-
-// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4bool SteppingAction::is_not_recorded_ID(const detected_part &det_part)
-{
-    return not_contains(det_part, RECORDED_LIST);
-}
-
-// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4bool SteppingAction::not_contains(const detected_part &x, const std::vector<detected_part> &v)
-{
-    if (v.empty()) return true;
-
-    for (auto & part : v)
-        {
-            if (part.direction == x.direction && part.ID == x.ID)
-                {
-                    return false;
-                }
-        }
-
-    return true;
 }

@@ -80,18 +80,36 @@ AnalysisManager::AnalysisManager() // constructor
     ENER_GRID = get_ener_grid();
     MOM_GRID = get_MOM_grid();
 
-    for (uint jj = 0; jj < 3; ++jj) // loop over photon electrons and positrons
-        {
-            for (uint ii = 0; ii < ENER_GRID.size(); ++ii)
-                {
-                    SPEC_PART[jj].push_back(0);
-                }
+    // initializing counters
 
-            for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+    for (uint i_alt = 0; i_alt < photon_counter_up.size(); ++i_alt)
+        {
+            photon_counter_up[i_alt] = 0;
+            electron_counter_up[i_alt] = 0;
+            positron_counter_up[i_alt] = 0;
+
+            photon_counter_down[i_alt] = 0;
+            electron_counter_down[i_alt] = 0;
+            positron_counter_down[i_alt] = 0;
+        }
+
+    // initilization of spectrums
+
+    for (uint i_alt = 0; i_alt < 3; ++i_alt) // loop over altitudes
+        {
+            for (uint i_part = 0; i_part < 3; ++i_part) // loop over photon electrons and positrons
                 {
-                    PART_MOM_X[jj].push_back(0);
-                    PART_MOM_Y[jj].push_back(0);
-                    PART_MOM_Z[jj].push_back(0);
+                    for (uint ii = 0; ii < ENER_GRID.size(); ++ii)
+                        {
+                            SPEC_PART[i_part][i_alt].push_back(0);
+                        }
+
+                    for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+                        {
+                            PART_MOM_X[i_part][i_alt].push_back(0);
+                            PART_MOM_Y[i_part][i_alt].push_back(0);
+                            PART_MOM_Z[i_part][i_alt].push_back(0);
+                        }
                 }
         }
 
@@ -132,34 +150,40 @@ void AnalysisManager::write_output_file_endOf_program()
                                 << " " << Settings::EFIELD_REGION_LEN
                                 << " " << Settings::POTENTIAL_VALUE
                                 << " " << Settings::TILT
-                                << " " << Settings::RREA_PART_NB_LIMIT_HAS_BEEN_REACHED
-                                << " " << photon_counter_up
-                                << " " << electron_counter_up
-                                << " " << positron_counter_up
-                                << " " << photon_counter_down
-                                << " " << electron_counter_down
-                                << " " << positron_counter_down;
+                                << " " << Settings::RREA_PART_NB_LIMIT_HAS_BEEN_REACHED;
 
-            for (uint jj = 0; jj < 3; ++jj)
+            for (uint i_alt = 0; i_alt < Settings::RECORD_ALTITUDES.size(); ++i_alt)
                 {
-                    for (uint ii = 0; ii < ENER_GRID.size(); ++ii)
-                        {
-                            asciiFile_analysis << " " << SPEC_PART[jj][ii];
-                        }
+                    asciiFile_analysis  << " " << Settings::RECORD_ALTITUDES[i_alt]
+                                        << " " << photon_counter_up[i_alt]
+                                        << " " << electron_counter_up[i_alt]
+                                        << " " << positron_counter_up[i_alt]
+                                        << " " << photon_counter_down[i_alt]
+                                        << " " << electron_counter_down[i_alt]
+                                        << " " << positron_counter_down[i_alt];
 
-                    for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
-                        {
-                            asciiFile_analysis << " " << PART_MOM_X[jj][ii];
-                        }
 
-                    for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+                    for (uint i_part = 0; i_part < 3; ++i_part)
                         {
-                            asciiFile_analysis << " " << PART_MOM_Y[jj][ii];
-                        }
+                            for (uint ii = 0; ii < ENER_GRID.size(); ++ii)
+                                {
+                                    asciiFile_analysis << " " << SPEC_PART[i_part][i_alt][ii];
+                                }
 
-                    for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
-                        {
-                            asciiFile_analysis << " " << PART_MOM_Z[jj][ii];
+                            for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+                                {
+                                    asciiFile_analysis << " " << PART_MOM_X[i_part][i_alt][ii];
+                                }
+
+                            for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+                                {
+                                    asciiFile_analysis << " " << PART_MOM_Y[i_part][i_alt][ii];
+                                }
+
+                            for (uint ii = 0; ii < MOM_GRID.size(); ++ii)
+                                {
+                                    asciiFile_analysis << " " << PART_MOM_Z[i_part][i_alt][ii];
+                                }
                         }
                 }
 
@@ -316,13 +340,13 @@ G4double AnalysisManager::get_scale(G4double alt)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void AnalysisManager::fill_histogram(G4int idx_part, const std::vector<double> &GRID, std::array<std::vector<uint>, 3> &COUNTS, const G4double value)
+void AnalysisManager::fill_histogram(G4int idx_part, G4int idx_alt, const std::vector<double> &GRID, std::array<std::array<std::vector<uint>, 3>, 3> &COUNTS, const G4double value)
 {
     for (uint ii = 0; ii < GRID.size() - 1; ++ii)
         {
             if (value >= GRID[ii] && value < GRID[ii + 1])
                 {
-                    COUNTS[idx_part][ii]++;
+                    COUNTS[idx_part][idx_alt][ii]++;
                     return;
                 }
         }
@@ -330,30 +354,30 @@ void AnalysisManager::fill_histogram(G4int idx_part, const std::vector<double> &
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void AnalysisManager::fill_histogram_ener(G4int idx_part, const G4double value)
+void AnalysisManager::fill_histogram_ener(G4int idx_part, G4int idx_alt, const G4double value)
 {
-    fill_histogram(idx_part, ENER_GRID, SPEC_PART, value);
+    fill_histogram(idx_part, idx_alt, ENER_GRID, SPEC_PART, value);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void AnalysisManager::fill_histogram_momX(G4int idx_part, const G4double value)
+void AnalysisManager::fill_histogram_momX(G4int idx_part, G4int idx_alt, const G4double value)
 {
-    fill_histogram(idx_part, MOM_GRID, PART_MOM_X, value);
+    fill_histogram(idx_part, idx_alt, MOM_GRID, PART_MOM_X, value);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void AnalysisManager::fill_histogram_momY(G4int idx_part, const G4double value)
+void AnalysisManager::fill_histogram_momY(G4int idx_part, G4int idx_alt, const G4double value)
 {
-    fill_histogram(idx_part, MOM_GRID, PART_MOM_Y, value);
+    fill_histogram(idx_part, idx_alt, MOM_GRID, PART_MOM_Y, value);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void AnalysisManager::fill_histogram_momZ(G4int idx_part, const G4double value)
+void AnalysisManager::fill_histogram_momZ(G4int idx_part, G4int idx_alt, const G4double value)
 {
-    fill_histogram(idx_part, MOM_GRID, PART_MOM_Z, value);
+    fill_histogram(idx_part, idx_alt, MOM_GRID, PART_MOM_Z, value);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

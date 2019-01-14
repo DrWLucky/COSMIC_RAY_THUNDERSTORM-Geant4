@@ -68,20 +68,20 @@ class AnalysisManager
 
         void check_if_should_use_stacking_action();
 
-        G4int photon_counter_up = 0;
-        G4int electron_counter_up = 0;
-        G4int positron_counter_up = 0;
+        std::array<G4int, 3> photon_counter_up;
+        std::array<G4int, 3> electron_counter_up;
+        std::array<G4int, 3> positron_counter_up;
 
-        G4int photon_counter_down = 0;
-        G4int electron_counter_down = 0;
-        G4int positron_counter_down = 0;
+        std::array<G4int, 3> photon_counter_down;
+        std::array<G4int, 3> electron_counter_down;
+        std::array<G4int, 3> positron_counter_down;
 
         void add_NB_OUTPUT();
 
-        void fill_histogram_ener(G4int idx_part, const G4double value);
-        void fill_histogram_momY(G4int idx_part, const G4double value);
-        void fill_histogram_momZ(G4int idx_part, const G4double value);
-        void fill_histogram_momX(G4int idx_part, const G4double value);
+        void fill_histogram_ener(G4int idx_part, G4int idx_alt, const G4double value);
+        void fill_histogram_momY(G4int idx_part, G4int idx_alt, const G4double value);
+        void fill_histogram_momZ(G4int idx_part, G4int idx_alt, const G4double value);
+        void fill_histogram_momX(G4int idx_part, G4int idx_alt, const G4double value);
 
     private:
         G4String asciiFileName1;
@@ -101,13 +101,13 @@ class AnalysisManager
         std::vector<double> ENER_GRID;
         std::vector<double> MOM_GRID;
 
-        std::array<std::vector<uint>, 3> SPEC_PART;
+        std::array<std::array<std::vector<uint>, 3>, 3> SPEC_PART;
 
-        std::array<std::vector<uint>, 3> PART_MOM_X;
-        std::array<std::vector<uint>, 3> PART_MOM_Y;
-        std::array<std::vector<uint>, 3> PART_MOM_Z;
+        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_X;
+        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Y;
+        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Z;
 
-        void fill_histogram(G4int idx_part, const std::vector<double> &GRID, std::array<std::vector<uint>, 3> &COUNTS, const G4double value);
+        void fill_histogram(G4int idx_part, G4int idx_alt, const std::vector<double> &GRID, std::array<std::array<std::vector<uint>, 3>, 3> &COUNTS, const G4double value);
 
         std::vector<double> get_ener_grid();
         std::vector<double> get_MOM_grid();

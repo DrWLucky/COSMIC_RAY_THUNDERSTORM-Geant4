@@ -33,20 +33,20 @@ efield_sizes = [2.0] # does not matter if efield_altitudes > 20
 #potential_list = [40., 60., 80. ,100., 120., 140., 160.]
 record_altitudes = [13.0]
 
-# -1 and 1 are used as a proxy of zero field since zero field leads to a not fully understood behaviour.
-#potential_list_0 = np.array([-10.,10.,-30.,30.,-60.,60.,-80.,80.,-100.,100.,-150.,150.,-200.,200.,-300.,300.,-400.,400.]) # will be changed
-#potential_list_0 = potential_list_0[potential_list_0<149.]
+efield_list = [0, 0.25, 0.5, 0.75, 1., 1.25, 1.5] # fraction of RREA threshold
+
+# converting fraction of RREA threshold to potential
 
 tilt_list = np.array([0.]) # does not matter if efield_altitudes > 20
 #tilt_list = np.array([0.,25.,45.])
 
 if ("iftrom" in computer_name) or ("7370" in computer_name) or ("sarria-pc" in computer_name):
-    nb_run = 100
+    nb_run = 1
 else :
     nb_run = 1000
 #potential_list = [200.]
 
-nb_record_to_shoot_per_run = 20000
+nb_record_per_run = 100
 
 # defining the commands to be run in parallel
 
@@ -63,7 +63,7 @@ for _ in range(nb_run):
             
             for pot in potential_list_0:
                 for tilt in tilt_list:
-                    commands.append(excecutable + ' ' + str(seedd) + ' ' + str(nb_record_to_shoot_per_run) 
+                    commands.append(excecutable + ' ' + str(seedd) + ' ' + str(nb_record_per_run) 
                                     + ' ' + str(alti_e) + ' ' + str(size) + ' ' + str(pot) + ' ' + str(tilt)
                                     + ' ' + str(record_altitudes[0]))
                     seedd+=1
