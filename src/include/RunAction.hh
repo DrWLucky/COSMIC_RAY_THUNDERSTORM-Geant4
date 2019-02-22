@@ -6,28 +6,26 @@
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class DetectorConstruction;
-class Run;
+
 class PrimaryGeneratorAction;
-class HistoManager;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class RunAction: public G4UserRunAction
+class RunAction : public G4UserRunAction
 {
-    public:
+public:
+    RunAction();
 
-        RunAction();
-        ~RunAction();
+    ~RunAction() override;
 
-    public:
+public:
+    void
+    BeginOfRunAction(const G4Run *) override;
 
-        virtual void
-        BeginOfRunAction(const G4Run *);
-        virtual void
-        EndOfRunAction(const G4Run *);
+    void
+    EndOfRunAction(const G4Run *) override;
 
-    private:
-
+private:
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

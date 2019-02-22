@@ -1,18 +1,18 @@
 #pragma once
 
-#include "globals.hh"
 #include "G4ios.hh"
+#include "globals.hh"
 
 #include "G4VPhysicsConstructor.hh"
 
-#include "G4PiKBuilder.hh"
 #include "G4BertiniPiKBuilder.hh"
 #include "G4FTFPPiKBuilder.hh"
+#include "G4PiKBuilder.hh"
 
-#include "G4ProtonBuilder.hh"
 #include "G4BertiniProtonBuilder.hh"
 #include "G4FTFPNeutronBuilder.hh"
 #include "G4FTFPProtonBuilder.hh"
+#include "G4ProtonBuilder.hh"
 
 #include "G4NeutronBuilder.hh"
 
@@ -20,78 +20,79 @@
 
 #include "G4FTFPNeutronBuilder.hh"
 
-#include "G4NeutronPHPBuilder.hh"
 #include "G4NeutronLENDBuilder.hh"
+#include "G4NeutronPHPBuilder.hh"
 
-#include "G4HyperonFTFPBuilder.hh"
 #include "G4AntiBarionBuilder.hh"
 #include "G4FTFPAntiBarionBuilder.hh"
+#include "G4HyperonFTFPBuilder.hh"
 
-#include "G4LENDFission.hh"
 #include "G4LENDCapture.hh"
-#include "G4LENDInelastic.hh"
 #include "G4LENDCaptureCrossSection.hh"
+#include "G4LENDFission.hh"
 #include "G4LENDFissionCrossSection.hh"
+#include "G4LENDInelastic.hh"
 
 #include "G4LENDInelasticCrossSection.hh"
 
 class G4ComponentGGHadronNucleusXsc;
 
-class G4HadronPhysicsFTFP_BERT_LEND: public G4VPhysicsConstructor
+class G4HadronPhysicsFTFP_BERT_LEND : public G4VPhysicsConstructor
 {
-    public:
+public:
+    G4HadronPhysicsFTFP_BERT_LEND(G4int verbose = 1);
 
-        G4HadronPhysicsFTFP_BERT_LEND(G4int verbose = 1);
-        G4HadronPhysicsFTFP_BERT_LEND(const G4String &name, G4bool quasiElastic = false);
-        virtual ~G4HadronPhysicsFTFP_BERT_LEND();
+    G4HadronPhysicsFTFP_BERT_LEND(const G4String &name, G4bool quasiElastic = false);
 
-    public:
+    virtual ~G4HadronPhysicsFTFP_BERT_LEND();
 
-        virtual void
-        ConstructParticle();
-        virtual void
-        ConstructProcess();
+public:
+    virtual void
+    ConstructParticle();
 
-    private:
+    virtual void
+    ConstructProcess();
 
-        void
-        CreateModels();
-        G4HadronicProcess *
-        FindInelasticProcess(const G4ParticleDefinition *);
+private:
+    void
+    CreateModels();
 
-        struct ThreadPrivate
-        {
-            G4NeutronBuilder        *theNeutrons;
-            G4BertiniNeutronBuilder *theBertiniNeutron;
-            G4FTFPNeutronBuilder    *theFTFPNeutron;
-            G4NeutronLENDBuilder    *theHPNeutron;
+    G4HadronicProcess *
+    FindInelasticProcess(const G4ParticleDefinition *);
 
-            G4PiKBuilder        *thePiK;
-            G4BertiniPiKBuilder *theBertiniPiK;
-            G4FTFPPiKBuilder    *theFTFPPiK;
+    struct ThreadPrivate
+    {
+        G4NeutronBuilder *theNeutrons;
+        G4BertiniNeutronBuilder *theBertiniNeutron;
+        G4FTFPNeutronBuilder *theFTFPNeutron;
+        G4NeutronLENDBuilder *theHPNeutron;
 
-            G4ProtonBuilder        *thePro;
-            G4BertiniProtonBuilder *theBertiniPro;
-            G4FTFPProtonBuilder    *theFTFPPro;
+        G4PiKBuilder *thePiK;
+        G4BertiniPiKBuilder *theBertiniPiK;
+        G4FTFPPiKBuilder *theFTFPPiK;
 
-            G4HyperonFTFPBuilder *theHyperon;
+        G4ProtonBuilder *thePro;
+        G4BertiniProtonBuilder *theBertiniPro;
+        G4FTFPProtonBuilder *theFTFPPro;
 
-            G4AntiBarionBuilder     *theAntiBaryon;
-            G4FTFPAntiBarionBuilder *theFTFPAntiBaryon;
+        G4HyperonFTFPBuilder *theHyperon;
 
-            G4ComponentGGHadronNucleusXsc *xsKaon;
-            G4VCrossSectionDataSet        *xsNeutronCaptureXS;
+        G4AntiBarionBuilder *theAntiBaryon;
+        G4FTFPAntiBarionBuilder *theFTFPAntiBaryon;
 
-            G4LENDFissionCrossSection *theLENDFissionCrossSection;
+        G4ComponentGGHadronNucleusXsc *xsKaon;
+        G4VCrossSectionDataSet *xsNeutronCaptureXS;
 
-            G4LENDCaptureCrossSection *theLENDCaptureCrossSection;
+        G4LENDFissionCrossSection *theLENDFissionCrossSection;
 
-            G4LENDInelastic             *theLENDInelastic;
-            G4LENDInelasticCrossSection *theLENDInelasticCrossSection;
-        };
-        static G4ThreadLocal ThreadPrivate *tpdata;
+        G4LENDCaptureCrossSection *theLENDCaptureCrossSection;
 
-        // G4VCrossSectionDataSet * BGGProton;
-        // G4VCrossSectionDataSet * BGGNeutron;
-        G4bool QuasiElastic;
+        G4LENDInelastic *theLENDInelastic;
+        G4LENDInelasticCrossSection *theLENDInelasticCrossSection;
+    };
+    static G4ThreadLocal ThreadPrivate *tpdata;
+
+    // G4VCrossSectionDataSet * BGGProton;
+    // G4VCrossSectionDataSet * BGGNeutron;
+    G4bool QuasiElastic;
 };

@@ -6,28 +6,26 @@
 #include <map>
 
 class DetectorConstruction;
+
 class G4ParticleDefinition;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class Run: public G4Run
+class Run : public G4Run
 {
-    public:
+public:
+    Run(DetectorConstruction *);
 
-        Run(DetectorConstruction *);
-        ~Run();
+    ~Run();
 
-    public:
+public:
+    void
+    EndOfRun();
 
-        void
-        EndOfRun();
-
-    private:
-
-    private:
-
-        DetectorConstruction *fDetector;
-        G4ParticleDefinition *fParticle;
+private:
+private:
+    DetectorConstruction *fDetector;
+    G4ParticleDefinition *fParticle;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

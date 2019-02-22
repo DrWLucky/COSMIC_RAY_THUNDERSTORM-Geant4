@@ -45,31 +45,29 @@
 
 #pragma once
 
-#include "G4VPhysicsConstructor.hh"
 #include "G4EmParticleList.hh"
-#include "globals.hh"
+#include "G4VPhysicsConstructor.hh"
 #include "Settings.hh"
+#include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class G4EmStandardPhysics_option1_dr : public G4VPhysicsConstructor
 {
-    public:
+public:
+    explicit G4EmStandardPhysics_option1_dr(G4int ver = 1, const G4String &name = "");
 
-        explicit G4EmStandardPhysics_option1_dr(G4int ver = 1, const G4String &name = "");
+    ~G4EmStandardPhysics_option1_dr() override;
 
-        virtual ~G4EmStandardPhysics_option1_dr();
+    void
+    ConstructParticle() override;
 
-        virtual void ConstructParticle();
-        virtual void ConstructProcess();
+    void
+    ConstructProcess() override;
 
-    private:
-        G4int  verbose;
-        G4EmParticleList partList;
+private:
+    G4int verbose;
+    G4EmParticleList partList;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-
-
-

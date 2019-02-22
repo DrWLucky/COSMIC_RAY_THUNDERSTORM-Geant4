@@ -1,56 +1,63 @@
 #pragma once
 
+#include "AnalysisManager.hh"
+#include "G4ThreeVector.hh"
 #include "G4UserSteppingAction.hh"
+#include "RegionInformation.hh"
 #include "globals.hh"
 #include <vector>
-#include "G4ThreeVector.hh"
-#include "AnalysisManager.hh"
-#include "RegionInformation.hh"
 
-#include <CLHEP/Units/SystemOfUnits.h>
-#include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include "Settings.hh"
 
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
 
 class DetectorConstruction;
+
 class EventAction;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class SteppingAction: public G4UserSteppingAction
+class SteppingAction : public G4UserSteppingAction
 {
-    public:
-        SteppingAction(DetectorConstruction *, EventAction *);
-        ~SteppingAction();
+public:
+    SteppingAction(DetectorConstruction *, EventAction *);
 
-        virtual void
-        UserSteppingAction(const G4Step *aStep);
+    ~SteppingAction() override;
 
-    private:
-        AnalysisManager *analysis = AnalysisManager::getInstance();
-        DetectorConstruction *fDetector;
-        EventAction *fEventAction;
-        G4StepPoint *thePrePoint = 0;
+    void
+    UserSteppingAction(const G4Step *aStep) override;
 
-        const G4int PDG_phot = 22;
-        const G4int PDG_elec = 11;
-        const G4int PDG_posi = -11;
+private:
+    AnalysisManager *analysis = AnalysisManager::getInstance();
+    DetectorConstruction *fDetector;
+    EventAction *fEventAction;
+    G4StepPoint *thePrePoint = nullptr;
 
-        double get_wall_time();
+    const G4int PDG_phot = 22;
+    const G4int PDG_elec = 11;
+    const G4int PDG_posi = -11;
 
-        double computation_length_for_event_limit = 600.; // 10 minutes
+    double
+    get_wall_time();
 
-        G4int part_ID;
-        G4int previous_part_ID;
+    double computation_time_length_for_event_limit = 900.; // 15 minutes
 
-        bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
-        G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
-        G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
+    //    G4int part_ID;
+    //    G4int previous_part_ID;
+
+    bool
+    is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+
+    G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
+
+    uint nb_skip = 0;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

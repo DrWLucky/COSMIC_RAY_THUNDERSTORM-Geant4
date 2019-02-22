@@ -26,43 +26,44 @@
 
 #pragma once
 
-#include "globals.hh"
 #include "G4VUserRegionInformation.hh"
+#include "globals.hh"
 
-class RegionInformation: public G4VUserRegionInformation
+class RegionInformation : public G4VUserRegionInformation
 {
-    public:
+public:
+    RegionInformation();
 
-        RegionInformation();
-        virtual ~RegionInformation();
-        virtual void
-        Print() const;
+    ~RegionInformation() override;
 
-        inline void
-        Set_World(G4bool v = true)
-        {
-            is_world_ = v;
-        }
+    void
+    Print() const override;
 
-        inline G4bool
-        is_World() const
-        {
-            return is_world_;
-        }
+    inline void
+    Set_World(G4bool v = true)
+    {
+        is_world_ = v;
+    }
 
-        inline void
-        Set_detection(G4bool v = true)
-        {
-            is_detection_ = v;
-        }
+    inline G4bool
+    is_World() const
+    {
+        return is_world_;
+    }
 
-        inline G4bool
-        is_detection() const
-        {
-            return is_detection_;
-        }
+    inline void
+    Set_detection(G4bool v = true)
+    {
+        is_detection_ = v;
+    }
 
-    private:
-        G4bool is_world_ = true;
-        G4bool is_detection_ = false;
+    inline G4bool
+    is_detection() const
+    {
+        return is_detection_;
+    }
+
+private:
+    G4bool is_world_ = true;
+    G4bool is_detection_ = false;
 };

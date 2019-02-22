@@ -31,11 +31,11 @@
 
 #pragma once
 
-#include "globals.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4UserStackingAction.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserStackingAction.hh"
 #include "Settings.hh"
+#include "globals.hh"
 #include <algorithm>
 #include <vector>
 
@@ -45,35 +45,47 @@ class BaseStackingActionMessenger;
 
 class BaseStackingAction : public G4UserStackingAction
 {
-    public:
-        BaseStackingAction();
-        virtual ~BaseStackingAction();
+public:
+    BaseStackingAction();
 
-    public:
-        virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track *aTrack);
-        virtual void NewStage();
-        virtual void PrepareNewEvent();
+    ~BaseStackingAction() override;
 
-    private:
-        bool does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS);
-        void print_status();
+public:
+    G4ClassificationOfNewTrack
+    ClassifyNewTrack(const G4Track *aTrack) override;
 
-        bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
-        void check_PART_NB_LIMIT();
-    public:
+    void
+    NewStage() override;
 
-    protected:
-        G4StackManager *stackManager;
-        //        G4String part_name;
-        std::vector<G4int> LIST_ENERGETIC_PART_IDS;
-        //        std::vector<G4double> LIST_ENERGIES;
-        G4double VARIABLE_TIME_LIMIT;
-        G4double TIME_STEP = -77.88 * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche length (time)
-        const G4double ENER_THRES = 800.0 * keV;
-        const uint ENERGETIC_PART_NB_LIMIT = 100000;
-        uint EVENT_NB = 0;
+    void
+    PrepareNewEvent() override;
 
-        G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
-        G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
+private:
+    bool
+    does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS);
+
+    void
+    print_status();
+
+    bool
+    is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+
+    void
+    check_PART_NB_LIMIT();
+
+public:
+protected:
+    G4StackManager *stackManager;
+    //        G4String part_name;
+    std::vector<G4int> LIST_ENERGETIC_PART_IDS;
+    //        std::vector<G4double> LIST_ENERGIES;
+    G4double VARIABLE_TIME_LIMIT;
+    G4double TIME_STEP = -77.88
+        * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche length (time)
+    const G4double ENER_THRES = 800.0 * keV;
+    const uint ENERGETIC_PART_NB_LIMIT = 10000;
+    uint EVENT_NB = 0;
+
+    G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
 };
-

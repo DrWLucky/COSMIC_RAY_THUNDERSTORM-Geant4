@@ -6,16 +6,16 @@
 ! real(8) :: cosangles(nb)
 ! real(8) :: altitudes(nb)
 ! integer :: types(nb),ii
-! 
+!
 ! call gen_parma_cr(seed,nb,energies,cosangles,altitudes,types)
-! 
+!
 ! open (unit=22,file="sampled_particles.txt",action="write",status="replace")
-! 
+!
 ! do ii=1,nb
 ! 25 FORMAT(I3, 3E14.6)
 !     write (22,25) types(ii),energies(ii),cosangles(ii),altitudes(ii)
 ! enddo
-! 
+!
 ! end program main
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -74,7 +74,7 @@ integer :: index_type
 ALLOCATE( a_table(0:ntypes,0:naltbin,0:nabin,0:nebin) )
 ALLOCATE( e_table(0:ntypes,0:naltbin,0:nebin) )
 
-call srand(seed)
+!call srand(seed)
 
 ! Set number of particle to be generated, and initial random seed
 nevent=nb ! number of particles to be generated
@@ -97,28 +97,28 @@ amin = -1.0   ! Minimum cosine of particle
 amax =  1.0   ! Maximum cosine of particle
 !altmax = 40.0 ! km
 !altmin = 1.0 ! km
-if(ip.eq.0.and.emin.lt.1.0e-8) emin=1.0e-8 ! Minimum energy for neutron is 10 meV
-if(ip.ne.0.and.emin.lt.1.0e-2) emin=1.0e-2 ! Minimum energy for other particle is 10 keV
+if(ip==0.and.emin<1.0e-8) emin=1.0e-8 ! Minimum energy for neutron is 10 meV
+if(ip/=0.and.emin<1.0e-2) emin=1.0e-2 ! Minimum energy for other particle is 10 keV
 
 ! Make energy and angle mesh and altitude mesh
 elog=log10(emin)
 estep=(log10(emax)-log10(emin))/nebin
 do ie=0,nebin
   ehigh(ie)=10d0**elog
-  if(ie.ne.0) emid(ie)=sqrt(ehigh(ie)*ehigh(ie-1))
+  if(ie/=0) emid(ie)=sqrt(ehigh(ie)*ehigh(ie-1))
   elog=elog+estep
 enddo
 
 astep=(amax-amin)/nabin
 do ia=0,nabin
   ahigh(ia)=amin+astep*ia
-  if(ia.ne.0) amid(ia)=(ahigh(ia)+ahigh(ia-1))*0.5
+  if(ia/=0) amid(ia)=(ahigh(ia)+ahigh(ia-1))*0.5
 enddo
 
 alt_step=(altmax-altmin)/naltbin
 do i_alt=0,naltbin
   althigh(i_alt)=altmin+alt_step*i_alt
-  if(i_alt.ne.0) altmid(i_alt)=(althigh(i_alt)+althigh(i_alt-1))*0.5
+  if(i_alt/=0) altmid(i_alt)=(althigh(i_alt)+althigh(i_alt-1))*0.5
 enddo
 
 ! Make cumulative probability table for particle type
@@ -131,9 +131,9 @@ type_table(:)=0.0d0
 do i_type=1,ntypes
 
     ip = type_list(i_type)
-    
+
     do i_alt=1,naltbin
-    
+
       s=getHP(iyear,imonth,iday,idummy) ! Solar activity (W index) of the day
       rr=getr(glat,glong)               ! Vertical cut-off rigidity (GV)
       d=getd(altmid(i_alt),glat)        ! Atmospheric depth (g/cm2), set glat = 100 for use US Standard Atmosphere 1976.
@@ -153,8 +153,8 @@ do i_type=1,ntypes
       spec_val = getSpec(ip,s,rr,d,emid_ie,g)
       !write(*,*) spec_val
       amid_ia = amid(ia)
-      if (amid_ia.gt.1.0) amid_ia = 0.999999
-      if (amid_ia.lt.-1.0) amid_ia = -0.999999
+      if (amid_ia>1.0) amid_ia = 0.999999
+      if (amid_ia<-1.0) amid_ia = -0.999999
 
       spec_angle = getSpecAngFinal(iangpart(ip),s,rr,d,emid_ie,g,amid_ia)
 
@@ -169,7 +169,7 @@ do i_type=1,ntypes
       endif
 
       a_table(i_type,i_alt,ia,ie) = a_table(i_type,i_alt,ia-1,ie) + spec_val * spec_angle * (2.0*PPII) * (ahigh(ia)-ahigh(ia-1))
-      
+
       if (isnan(a_table(i_type,i_alt,ia-1,ie))) then
           write(*,*) "one a_table value is nan, aborting."
           call abort
@@ -182,7 +182,7 @@ do i_type=1,ntypes
     alt_table(i_type,i_alt)=alt_table(i_type,i_alt-1)+e_table(i_type,i_alt,nebin)*(althigh(i_alt)-althigh(i_alt-1))
 
     enddo
-    
+
     type_table(i_type) = type_table(i_type-1) + alt_table(i_type,naltbin)
 
 enddo
@@ -196,10 +196,10 @@ do i_type=1,ntypes
   do i_alt=1,naltbin
     alt_table(i_type,i_alt) = alt_table(i_type,i_alt)/alt_table(i_type,naltbin)
     do ie=1,nebin
-	e_table(i_type,i_alt,ie) = e_table(i_type,i_alt,ie)/e_table(i_type,i_alt,nebin)
-	do ia=1,nabin
-	    a_table(i_type,i_alt,ia,ie) = a_table(i_type,i_alt,ia,ie) / a_table(i_type,i_alt,nabin,ie)
-	enddo
+        e_table(i_type,i_alt,ie) = e_table(i_type,i_alt,ie)/e_table(i_type,i_alt,nebin)
+        do ia=1,nabin
+            a_table(i_type,i_alt,ia,ie) = a_table(i_type,i_alt,ia,ie) / a_table(i_type,i_alt,nabin,ie)
+        enddo
     enddo
   enddo
 enddo
@@ -212,11 +212,11 @@ do i=1,nevent
 !  write(*,*) index_type
  altitudes(i) = getGeneration(i_alt,naltbin,althigh,alt_table(index_type,:))
  alt_tmp = altitudes(i);
- if (altitudes(i).lt.0.0) then
+ if (altitudes(i)<0.0) then
      write(*,*) "One altitude value is negative. Aborting."
      call abort()
  endif
- 
+
  energies(i) = getGeneration(ie,nebin,ehigh,e_table(index_type,i_alt,:))    ! energy
  cosangles(i) = getGeneration(ia,nabin,ahigh,a_table(index_type,i_alt,:,ie)) ! z direction, -1.0:upward, 0.0:horizontal, 1.0:downward
  types(i) = index_type
@@ -260,17 +260,22 @@ end subroutine gen_parma_cr
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function getGeneration(ibin,nbin,high,table)
-implicit real*8 (a-h, o-z)
+implicit real(kind=8) (a-h, o-z)
+real(kind=8) randd
 dimension high(0:nbin)
 dimension table(0:nbin)
 
-randd=rand() ! random number
+!randd=rand() ! random number
+CALL RANDOM_NUMBER(randd)
+!write(*,*) randd
 do i=1,nbin-1
- if(randd.le.table(i)) exit
+ if(randd<=table(i)) exit
 enddo
 ibin=i ! bin ID
 
-randd=rand() ! random number
+!randd=rand() ! random number
+CALL RANDOM_NUMBER(randd)
+!write(*,*) randd
 getGeneration = high(ibin-1)*randd + high(ibin)*(1.0d0-randd)
 
 return
@@ -280,18 +285,22 @@ end
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function getGeneration_index(ibin,nbin,table)
-implicit real*8 (a-h, o-z)
+implicit real(kind=8) (a-h, o-z)
+real(kind=8) randd
 dimension high(0:nbin)
 dimension table(0:nbin)
 
-randd=rand() ! random number
+!randd=rand() ! random number
+CALL RANDOM_NUMBER(randd)
+
 do i=1,nbin-1
- if(randd.le.table(i)) exit
+ if(randd<=table(i)) exit
 enddo
 ibin=i ! bin ID
 
-randd=rand() ! random number
-getGeneration = 0.
+!randd=rand() ! random number
+CALL RANDOM_NUMBER(randd)
+getGeneration_index = 0
 
 return
 

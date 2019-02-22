@@ -1,14 +1,6 @@
 #include "SD.hh"
-#include "G4HCofThisEvent.hh"
-#include "G4TouchableHistory.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4SDManager.hh"
-#include "G4ios.hh"
-#include "G4StepPoint.hh"
 #include "G4EventManager.hh"
-#include "G4Event.hh"
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "G4SDManager.hh"
 
 //
 
@@ -16,7 +8,7 @@
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SensitiveDet::SensitiveDet(G4String name, const G4int ID, const G4double alti_in_km) : G4VSensitiveDetector(name)
+SensitiveDet::SensitiveDet(G4String name, const G4int ID, const G4double &alti_in_km) : G4VSensitiveDetector(name)
 {
     ID_SD = ID;
     RECORD_ALT_IN_KM = alti_in_km;
@@ -32,7 +24,8 @@ SensitiveDet::~SensitiveDet()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SensitiveDet::Initialize(G4HCofThisEvent *) // executed at begin of each event
+void
+SensitiveDet::Initialize(G4HCofThisEvent *) // executed at begin of each event
 {
     //    RECORDED_LIST.clear();
     Settings::current_efield_status = Settings::initial_efield_status;
@@ -40,7 +33,8 @@ void SensitiveDet::Initialize(G4HCofThisEvent *) // executed at begin of each ev
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
+G4bool
+SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
 {
     given_altitude_particle_record(aStep);
 
@@ -49,7 +43,8 @@ G4bool SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SensitiveDet::EndOfEvent(G4HCofThisEvent * /*HCE*/)
+void
+SensitiveDet::EndOfEvent(G4HCofThisEvent * /*HCE*/)
 {
     // RK : see EndOfEventAction method in EventAction.cc
 
@@ -59,7 +54,8 @@ void SensitiveDet::EndOfEvent(G4HCofThisEvent * /*HCE*/)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SensitiveDet::given_altitude_particle_record(const G4Step *aStep)
+void
+SensitiveDet::given_altitude_particle_record(const G4Step *)
 {
     //    const G4int PDG_nb = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
@@ -138,8 +134,6 @@ void SensitiveDet::given_altitude_particle_record(const G4Step *aStep)
 
     //            analysis->add_NB_OUTPUT();
 
-
-
     //            //            analysis->register_particle(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding(),
     //            //                                        ID_part,
     //            //                                        thePrePoint->GetPosition().x() / meter,
@@ -160,26 +154,28 @@ void SensitiveDet::given_altitude_particle_record(const G4Step *aStep)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double SensitiveDet::get_RECORD_ALT_IN_KM() const
+G4double
+SensitiveDet::get_RECORD_ALT_IN_KM() const
 {
     return RECORD_ALT_IN_KM;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4int SensitiveDet::get_ID_SD() const
+G4int
+SensitiveDet::get_ID_SD() const
 {
     return ID_SD;
 }
 
 //// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//G4bool SensitiveDet::is_not_recorded_ID(const detected_part &det_part)
+// G4bool SensitiveDet::is_not_recorded_ID(const detected_part &det_part)
 //{
 //    return not_contains(det_part, RECORDED_LIST);
 //}
 
 //// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//G4bool SensitiveDet::not_contains(const detected_part &x, const std::vector<detected_part> &v)
+// G4bool SensitiveDet::not_contains(const detected_part &x, const std::vector<detected_part> &v)
 //{
 //    if (v.empty()) return true;
 

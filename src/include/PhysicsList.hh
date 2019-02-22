@@ -25,30 +25,37 @@
 
 #pragma once
 
-#include "G4VModularPhysicsList.hh"
-#include "globals.hh"
+#include "G4EmParameters.hh"
 #include "G4RegionStore.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4VUserPhysicsList.hh"
 #include "Settings.hh"
-#include "G4EmParameters.hh"
+#include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsList: public G4VModularPhysicsList
+class PhysicsList : public G4VModularPhysicsList
 {
-    public:
-        PhysicsList(const bool em_only);
-        ~PhysicsList();
+public:
+    explicit PhysicsList(const bool em_only);
 
-    public:
-        virtual void ConstructParticle();
-        virtual void SetCuts();
+    ~PhysicsList() override;
 
-        //        void AddStepMax();
-        void Add_Step_Maxs();
+public:
+    void
+    ConstructParticle() override;
+
+    void
+    SetCuts() override;
+
+    //        void AddStepMax();
+    void
+    Add_Step_Maxs();
+
 private:
-        void Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma);
+    void
+    Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

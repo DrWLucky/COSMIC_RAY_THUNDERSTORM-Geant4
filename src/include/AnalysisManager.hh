@@ -45,70 +45,94 @@
 
 class AnalysisManager
 {
-    private:
+private:
 
-        AnalysisManager();
+    AnalysisManager();
 
-        static AnalysisManager *instance;
+    static AnalysisManager *instance;
 
-    private:
-        ////////////////////////////////////////////////////
-        //        static const uint NB_ENER_BINS = 256;
-        //        static const uint NB_MOM_BINS = 128;
+private:
+    ////////////////////////////////////////////////////
+    //        static const uint NB_ENER_BINS = 256;
+    //        static const uint NB_MOM_BINS = 128;
 
-    public:
+public:
 
-        ~AnalysisManager();
+    ~AnalysisManager();
 
-        static AnalysisManager *getInstance();
+    static AnalysisManager *
+    getInstance();
 
-        void write_output_file_endOf_program();
+    void
+    write_output_file_endOf_program();
 
-        G4int NB_OUTPUT() const;
+    G4int
+    NB_OUTPUT() const;
 
-        void check_if_should_use_stacking_action();
+    void
+    check_if_should_use_stacking_action();
 
-        std::array<G4int, 3> photon_counter_up;
-        std::array<G4int, 3> electron_counter_up;
-        std::array<G4int, 3> positron_counter_up;
+    std::array<G4int, 3> photon_counter_up;
+    std::array<G4int, 3> electron_counter_up;
+    std::array<G4int, 3> positron_counter_up;
 
-        std::array<G4int, 3> photon_counter_down;
-        std::array<G4int, 3> electron_counter_down;
-        std::array<G4int, 3> positron_counter_down;
+    std::array<G4int, 3> photon_counter_down;
+    std::array<G4int, 3> electron_counter_down;
+    std::array<G4int, 3> positron_counter_down;
 
-        void add_NB_OUTPUT();
+    void
+    add_NB_OUTPUT();
 
-        void fill_histogram_ener(G4int idx_part, G4int idx_alt, const G4double value);
-        void fill_histogram_momY(G4int idx_part, G4int idx_alt, const G4double value);
-        void fill_histogram_momZ(G4int idx_part, G4int idx_alt, const G4double value);
-        void fill_histogram_momX(G4int idx_part, G4int idx_alt, const G4double value);
+    void
+    fill_histogram_ener(const G4int idx_part, const G4int idx_alt, const G4double &value);
 
-    private:
-        G4String asciiFileName1;
+    void
+    fill_histogram_momY(const G4int idx_part, const G4int idx_alt, const G4double &value);
 
-        G4int NB_OUTPUT_ = 0;
+    void
+    fill_histogram_momZ(const G4int idx_part, const G4int idx_alt, const G4double &value);
 
-        std::vector < G4String > RECORDED_OUTPUT_STRINGS;
+    void
+    fill_histogram_momX(const G4int idx_part, const G4int idx_alt, const G4double &value);
 
-        std::ofstream asciiFile_analysis;
-        bool not_contains(const G4int &x, const std::vector<G4int> &v);
+private:
+    G4String asciiFileName1;
 
-        G4double get_scale(G4double alt);
-        G4double interpolate(std::vector<G4double> &xData, std::vector<G4double> &yData, G4double x, bool extrapolate);
+    G4int NB_OUTPUT_ = 0;
 
-        ////////////////////////////////////////////////////
+    std::vector<G4String> RECORDED_OUTPUT_STRINGS;
 
-        std::vector<double> ENER_GRID;
-        std::vector<double> MOM_GRID;
+    std::ofstream asciiFile_analysis;
 
-        std::array<std::array<std::vector<uint>, 3>, 3> SPEC_PART;
+    //    bool not_contains(const G4int &x, const std::vector<G4int> &v);
 
-        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_X;
-        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Y;
-        std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Z;
+    G4double
+    get_scale(const G4double alt);
 
-        void fill_histogram(G4int idx_part, G4int idx_alt, const std::vector<double> &GRID, std::array<std::array<std::vector<uint>, 3>, 3> &COUNTS, const G4double value);
+    G4double
+    interpolate(std::vector<G4double> &xData, std::vector<G4double> &yData, G4double x, bool extrapolate);
 
-        std::vector<double> get_ener_grid();
-        std::vector<double> get_MOM_grid();
+    ////////////////////////////////////////////////////
+
+    std::vector<double> ENER_GRID;
+    std::vector<double> MOM_GRID;
+
+    std::array<std::array<std::vector<uint>, 3>, 3> SPEC_PART;
+
+    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_X;
+    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Y;
+    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Z;
+
+    void
+    fill_histogram(const G4int idx_part,
+                   const G4int idx_alt,
+                   const std::vector<double> &GRID,
+                   std::array<std::array<std::vector<uint>, 3>, 3> &COUNTS,
+                   const G4double &value);
+
+    std::vector<double>
+    get_ener_grid();
+
+    std::vector<double>
+    get_MOM_grid();
 };

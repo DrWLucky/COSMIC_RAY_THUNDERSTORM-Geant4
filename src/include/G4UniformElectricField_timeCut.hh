@@ -27,37 +27,32 @@
 
 #pragma once
 
-#include "G4Types.hh"
-#include "G4ThreeVector.hh"
 #include "G4ElectricField.hh"
-#include "globals.hh"
+#include "G4ThreeVector.hh"
+#include "G4Types.hh"
 #include "Settings.hh"
-
-
+#include "globals.hh"
 
 class G4UniformElectricField_timeCut : public G4ElectricField
 {
-    public:  // with description
+public: // with description
+    explicit G4UniformElectricField_timeCut(const G4ThreeVector FieldVector);
+    // A field with value equal to FieldVector.
 
-        G4UniformElectricField_timeCut(const G4ThreeVector FieldVector);
-        // A field with value equal to FieldVector.
+    G4UniformElectricField_timeCut(G4double vField, G4double vTheta, G4double vPhi);
 
-        G4UniformElectricField_timeCut(G4double vField,
-                                       G4double vTheta,
-                                       G4double vPhi) ;
+    ~G4UniformElectricField_timeCut() override;
 
-        virtual ~G4UniformElectricField_timeCut() ;
+    G4UniformElectricField_timeCut &
+    operator=(const G4UniformElectricField_timeCut &p);
+    // Copy constructor and assignment operator
 
-        G4UniformElectricField_timeCut(const G4UniformElectricField_timeCut &p);
-        G4UniformElectricField_timeCut &operator = (const G4UniformElectricField_timeCut &p);
-        // Copy constructor and assignment operator
+    void
+    GetFieldValue(const G4double pos[4], G4double *field) const override;
 
-        virtual void GetFieldValue(const G4double pos[4], G4double *field) const;
+    G4Field *
+    Clone() const override;
 
-        virtual G4Field *Clone() const;
-
-    private:
-
-        G4double fFieldComponents[6] ;
-
+private:
+    G4double fFieldComponents[6];
 };

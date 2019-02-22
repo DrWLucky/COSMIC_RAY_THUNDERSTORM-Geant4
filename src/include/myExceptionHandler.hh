@@ -48,36 +48,40 @@
 
 #pragma once
 
-#include "globals.hh"
-#include "G4VExceptionHandler.hh"
 #include "G4ExceptionSeverity.hh"
+#include "G4VExceptionHandler.hh"
+#include "globals.hh"
 
 class myExceptionHandler : public G4VExceptionHandler
 {
 
-    public:
+public:
+    myExceptionHandler(G4int verbosity_input);
 
-        myExceptionHandler(G4int verbosity_input);
-        virtual ~myExceptionHandler();
-        G4int operator==(const myExceptionHandler &right) const;
-        G4int operator!=(const myExceptionHandler &right) const;
+    ~myExceptionHandler() override;
 
-    public: // with description
+    G4int
+    operator==(const myExceptionHandler &right) const;
 
-        virtual G4bool Notify(const char *originOfException,
-                              const char *exceptionCode,
-                              G4ExceptionSeverity severity,
-                              const char *description);
-        // Virtual method which will be invoked by G4StateManager when
-        // G4Exception occurs.
-        // If TRUE returned, core dump will be generated, while FALSE returned,
-        // program execution continues.
+    G4int
+    operator!=(const myExceptionHandler &right) const;
 
-    private:
+public: // with description
+    virtual G4bool
+    Notify(const char *originOfException,
+           const char *exceptionCode,
+           G4ExceptionSeverity severity,
+           const char *description);
+    // Virtual method which will be invoked by G4StateManager when
+    // G4Exception occurs.
+    // If TRUE returned, core dump will be generated, while FALSE returned,
+    // program execution continues.
 
-        myExceptionHandler(const myExceptionHandler &right);
-        myExceptionHandler &operator=(const myExceptionHandler &right);
+private:
+    myExceptionHandler(const myExceptionHandler &right);
 
-        G4int verbosity = 0;
+    myExceptionHandler &
+    operator=(const myExceptionHandler &right);
 
+    G4int verbosity = 0;
 };
