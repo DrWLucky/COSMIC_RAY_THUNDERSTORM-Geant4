@@ -19,12 +19,13 @@ public:
 
     ~ActionInitialization() override;
 
-    void
-    BuildForMaster() const override;
+    void BuildForMaster() const override;
 
-    void
-    Build() const override;
+    void Build() const override;
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     DetectorConstruction *fDetector;
 };

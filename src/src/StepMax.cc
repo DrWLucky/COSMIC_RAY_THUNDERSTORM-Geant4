@@ -37,8 +37,7 @@ StepMax::~StepMax() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool
-StepMax::IsApplicable(const G4ParticleDefinition &particle)
+G4bool StepMax::IsApplicable(const G4ParticleDefinition &particle)
 {
     return (!particle.IsShortLived());
     //    return (particle.GetPDGCharge() != 0. && !particle.IsShortLived());
@@ -46,16 +45,14 @@ StepMax::IsApplicable(const G4ParticleDefinition &particle)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-StepMax::SetMaxStep(G4double step)
+void StepMax::SetMaxStep(G4double step)
 {
     fMaxChargedStep = step;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-StepMax::PostStepGetPhysicalInteractionLength(const G4Track &, G4double, G4ForceCondition *condition)
+G4double StepMax::PostStepGetPhysicalInteractionLength(const G4Track &, G4double, G4ForceCondition *condition)
 {
     // condition is set to "Not Forced"
     *condition = NotForced;
@@ -65,8 +62,7 @@ StepMax::PostStepGetPhysicalInteractionLength(const G4Track &, G4double, G4Force
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VParticleChange *
-StepMax::PostStepDoIt(const G4Track &aTrack, const G4Step &)
+G4VParticleChange *StepMax::PostStepDoIt(const G4Track &aTrack, const G4Step &)
 {
     // do nothing
     aParticleChange.Initialize(aTrack);

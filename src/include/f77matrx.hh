@@ -24,7 +24,8 @@
   Author: Carsten A. Arnholm, 04-MAR-1996
 */
 
-template<class T> class FMATRIX
+template<class T>
+class FMATRIX
 {
 public:
     FMATRIX(size_t dim1, size_t dim2);
@@ -33,8 +34,7 @@ public:
 
     operator T *();
 
-    T &
-    operator()(size_t index1, size_t index2);
+    T &operator()(size_t index1, size_t index2);
 
     ~FMATRIX();
 
@@ -88,8 +88,8 @@ FMATRIX<T>::operator T *()
     return f77rep;
 }
 
-template<class T> T &
-FMATRIX<T>::operator()(size_t index1, size_t index2)
+template<class T>
+T &FMATRIX<T>::operator()(size_t index1, size_t index2)
 {
     assert(ndim == 2); // only 2d arrays supported (so far)
 

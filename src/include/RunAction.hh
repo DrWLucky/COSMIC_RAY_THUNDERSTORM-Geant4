@@ -19,11 +19,9 @@ public:
     ~RunAction() override;
 
 public:
-    void
-    BeginOfRunAction(const G4Run *) override;
+    void BeginOfRunAction(const G4Run *) override;
 
-    void
-    EndOfRunAction(const G4Run *) override;
+    void EndOfRunAction(const G4Run *) override;
 
 private:
 };

@@ -6,9 +6,7 @@
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::SteppingAction(DetectorConstruction *det, EventAction *event) : G4UserSteppingAction(),
-                                                                                fDetector(det),
-                                                                                fEventAction(event)
+SteppingAction::SteppingAction(DetectorConstruction *det, EventAction *event) : G4UserSteppingAction(), fDetector(det), fEventAction(event)
 {
 }
 
@@ -18,8 +16,7 @@ SteppingAction::~SteppingAction() = default;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-SteppingAction::UserSteppingAction(const G4Step *aStep)
+void SteppingAction::UserSteppingAction(const G4Step *aStep)
 {
     //////// AVOID PUTTING THIS LINE, it will produce incorrect energy record
     //        if (aStep->GetTrack()->GetTrackStatus() != fAlive) return;
@@ -43,13 +40,13 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
         return;
     }
 
-    if (std::abs(aStep->GetPreStepPoint()->GetPosition().x()) > Settings::CR_SAMPLING_XY_HALF_SIZE * km)
+    if (std::abs(aStep->GetPreStepPoint()->GetPosition().x()) > settings->CR_SAMPLING_XY_HALF_SIZE * km)
     {
         aStep->GetTrack()->SetTrackStatus(fStopAndKill);
         return;
     }
 
-    if (std::abs(aStep->GetPreStepPoint()->GetPosition().z()) > Settings::CR_SAMPLING_XY_HALF_SIZE * km)
+    if (std::abs(aStep->GetPreStepPoint()->GetPosition().z()) > settings->CR_SAMPLING_XY_HALF_SIZE * km)
     {
         aStep->GetTrack()->SetTrackStatus(fStopAndKill);
         return;
@@ -59,7 +56,7 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
     // turn off electric field if event is too long (i.e. requires too much
     // computation time)
 
-    if (Settings::USE_WALL_TIME_LIMIT_FOR_EVENT)
+    if (settings->USE_WALL_TIME_LIMIT_FOR_EVENT)
     {
         nb_skip++;
 
@@ -67,10 +64,10 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
         {
             double WT = get_wall_time();
 
-            if (abs(WT - Settings::wall_T_begin_event) > computation_time_length_for_event_limit)
+            if (abs(WT - settings->wall_T_begin_event) > computation_time_length_for_event_limit)
             {
-                Settings::current_efield_status = Settings::OFF;
-                Settings::RREA_PART_NB_LIMIT_HAS_BEEN_REACHED = 1;
+                settings->current_efield_status = settings->OFF;
+                settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED = 1;
             }
 
             nb_skip = 0;
@@ -81,12 +78,12 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
     }
 
     ////////////////////////////
-    if (std::abs(aStep->GetPreStepPoint()->GetPosition().x()) > Settings::EFIELD_XY_HALF_SIZE * km)
+    if (std::abs(aStep->GetPreStepPoint()->GetPosition().x()) > settings->EFIELD_XY_HALF_SIZE * km)
     {
         return;
     }
 
-    if (std::abs(aStep->GetPreStepPoint()->GetPosition().z()) > Settings::EFIELD_XY_HALF_SIZE * km)
+    if (std::abs(aStep->GetPreStepPoint()->GetPosition().z()) > settings->EFIELD_XY_HALF_SIZE * km)
     {
         return;
     }
@@ -117,16 +114,13 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
         return;
     }
 
-    if (Settings::USE_STACKING_ACTION)
+    if (settings->USE_STACKING_ACTION)
     {
         if (aStep->GetPreStepPoint())
         {
-            if ((Settings::current_efield_status != Settings::OFF)
-                && (is_inside_eField_region(aStep->GetPreStepPoint()->GetPosition().y(),
-                                            aStep->GetPreStepPoint()->GetPosition().x(),
-                                            aStep->GetPreStepPoint()->GetPosition().z())))
+            if ((settings->current_efield_status != settings->OFF) && (is_inside_eField_region(aStep->GetPreStepPoint()->GetPosition().y(), aStep->GetPreStepPoint()->GetPosition().x(), aStep->GetPreStepPoint()->GetPosition().z())))
             {
-                if (aStep->GetTrack()->GetGlobalTime() > Settings::VARIABLE_TIME_LIMIT)
+                if (aStep->GetTrack()->GetGlobalTime() > settings->VARIABLE_TIME_LIMIT)
                 {
                     aStep->GetTrack()->SetTrackStatus(fSuspend);
                 }
@@ -146,12 +140,11 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
     const G4double pre_y = aStep->GetPreStepPoint()->GetPosition().y() / km;
     const G4double post_y = aStep->GetPostStepPoint()->GetPosition().y() / km;
 
-    for (uint i_alt = 0; i_alt < Settings::RECORD_ALTITUDES.size(); ++i_alt)
+    for (uint i_alt = 0; i_alt < settings->RECORD_ALTITUDES.size(); ++i_alt)
     {
-        G4double rec_alt = Settings::RECORD_ALTITUDES[i_alt];
+        G4double rec_alt = settings->RECORD_ALTITUDES[i_alt];
 
-        if ((pre_y >= rec_alt && post_y < rec_alt)
-            || (pre_y <= rec_alt && post_y > rec_alt)) // particle is crossing 20 km layer
+        if ((pre_y >= rec_alt && post_y < rec_alt) || (pre_y <= rec_alt && post_y > rec_alt)) // particle is crossing 20 km layer
         {
             //    if (thePrePoint->GetStepStatus() == fGeomBoundary) // if the
             //    particle has just entered the volume ; should not be necessary, but
@@ -164,63 +157,48 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
 
             // WARNING : PARTICLES ARE ALLOWED TO BE RECORED SEVERAL TIMES
 
-            if (ener > Settings::ENERGY_MIN && ener < Settings::ENERGY_MAX)
+            if (ener > settings->ENERGY_MIN_RECORD && ener < settings->ENERGY_MAX_RECORD)
                 //            if (aStep->GetTrack()->GetKineticEnergy() >
-                //            Settings::ENERGY_MIN)
+                //            settings->ENERGY_MIN_RECORD)
             {
-                if (PDG_nb == 22)
+                if (PDG_nb == -13)
                 {
-                    analysis->fill_histogram_ener(0, i_alt, ener);
-                    analysis->fill_histogram_momX(0, i_alt, thePrePoint->GetMomentumDirection().x());
-                    analysis->fill_histogram_momY(0, i_alt, thePrePoint->GetMomentumDirection().y());
-                    analysis->fill_histogram_momZ(0, i_alt, thePrePoint->GetMomentumDirection().z());
+                    analysis->fill_histogram_E(0, i_alt, ener);
+                    analysis->fill_histogram_mX(0, i_alt, thePrePoint->GetMomentumDirection().x());
+                    analysis->fill_histogram_mY(0, i_alt, thePrePoint->GetMomentumDirection().y());
+                    analysis->fill_histogram_mZ(0, i_alt, thePrePoint->GetMomentumDirection().z());
                 }
 
-                if (PDG_nb == 11)
+                if (PDG_nb == 13)
                 {
-                    analysis->fill_histogram_ener(1, i_alt, ener);
-                    analysis->fill_histogram_momX(1, i_alt, thePrePoint->GetMomentumDirection().x());
-                    analysis->fill_histogram_momY(1, i_alt, thePrePoint->GetMomentumDirection().y());
-                    analysis->fill_histogram_momZ(1, i_alt, thePrePoint->GetMomentumDirection().z());
+                    analysis->fill_histogram_E(1, i_alt, ener);
+                    analysis->fill_histogram_mX(1, i_alt, thePrePoint->GetMomentumDirection().x());
+                    analysis->fill_histogram_mY(1, i_alt, thePrePoint->GetMomentumDirection().y());
+                    analysis->fill_histogram_mZ(1, i_alt, thePrePoint->GetMomentumDirection().z());
                 }
 
-                if (PDG_nb == -11)
-                {
-                    analysis->fill_histogram_ener(2, i_alt, ener);
-                    analysis->fill_histogram_momX(2, i_alt, thePrePoint->GetMomentumDirection().x());
-                    analysis->fill_histogram_momY(2, i_alt, thePrePoint->GetMomentumDirection().y());
-                    analysis->fill_histogram_momZ(2, i_alt, thePrePoint->GetMomentumDirection().z());
-                }
 
                 if (momy > 0.0)
                 {
-                    if (PDG_nb == 22)
+                    if (PDG_nb == -13)
                     {
-                        analysis->photon_counter_up[i_alt]++;
+                        analysis->counter_up[i_alt][0]++;
                     }
-                    else if (PDG_nb == 11)
+                    else if (PDG_nb == 13)
                     {
-                        analysis->electron_counter_up[i_alt]++;
-                    }
-                    else if (PDG_nb == -11)
-                    {
-                        analysis->positron_counter_up[i_alt]++;
+                        analysis->counter_up[i_alt][1]++;
                     }
                 }
 
                 if (momy < 0.0)
                 {
-                    if (PDG_nb == 22)
+                    if (PDG_nb == -13)
                     {
-                        analysis->photon_counter_down[i_alt]++;
+                        analysis->counter_down[i_alt][0]++;
                     }
-                    else if (PDG_nb == 11)
+                    else if (PDG_nb == 13)
                     {
-                        analysis->electron_counter_down[i_alt]++;
-                    }
-                    else if (PDG_nb == -11)
-                    {
-                        analysis->positron_counter_down[i_alt]++;
+                        analysis->counter_down[i_alt][1]++;
                     }
                 }
 
@@ -231,18 +209,15 @@ SteppingAction::UserSteppingAction(const G4Step *aStep)
 
 } // SteppingAction::UserSteppingAction
 
-bool
-SteppingAction::is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz)
+bool SteppingAction::is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz)
 // alt assumed in km
 {
-    return alt > alt_min && alt < alt_max && std::fabs(xx) < Settings::EFIELD_XY_HALF_SIZE
-        && std::fabs(zz) < Settings::EFIELD_XY_HALF_SIZE;
+    return alt > alt_min && alt < alt_max && std::fabs(xx) < settings->EFIELD_XY_HALF_SIZE && std::fabs(zz) < settings->EFIELD_XY_HALF_SIZE;
 }
 
 // ------------------------------------------------------------------------
 
-double
-SteppingAction::get_wall_time()
+double SteppingAction::get_wall_time()
 // returns time in seconds
 {
     struct timeval tv{};

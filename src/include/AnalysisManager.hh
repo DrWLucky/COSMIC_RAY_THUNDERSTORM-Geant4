@@ -60,42 +60,36 @@ public:
 
     ~AnalysisManager();
 
-    static AnalysisManager *
-    getInstance();
+    static AnalysisManager *getInstance();
 
-    void
-    write_output_file_endOf_program();
+    void write_output_file_endOf_program();
 
-    G4int
-    NB_OUTPUT() const;
+    G4int NB_OUTPUT() const;
 
-    void
-    check_if_should_use_stacking_action();
+    void check_if_should_use_stacking_action();
 
-    std::array<G4int, 3> photon_counter_up;
-    std::array<G4int, 3> electron_counter_up;
-    std::array<G4int, 3> positron_counter_up;
+    void add_NB_OUTPUT();
 
-    std::array<G4int, 3> photon_counter_down;
-    std::array<G4int, 3> electron_counter_down;
-    std::array<G4int, 3> positron_counter_down;
+    void fill_histogram_E(const G4int idx_part, const G4int idx_alt, const G4double &value);
+    void fill_histogram_mX(const G4int idx_part, const G4int idx_alt, const G4double &value);
+    void fill_histogram_mY(const G4int idx_part, const G4int idx_alt, const G4double &value);
+    void fill_histogram_mZ(const G4int idx_part, const G4int idx_alt, const G4double &value);
 
-    void
-    add_NB_OUTPUT();
-
-    void
-    fill_histogram_ener(const G4int idx_part, const G4int idx_alt, const G4double &value);
-
-    void
-    fill_histogram_momY(const G4int idx_part, const G4int idx_alt, const G4double &value);
-
-    void
-    fill_histogram_momZ(const G4int idx_part, const G4int idx_alt, const G4double &value);
-
-    void
-    fill_histogram_momX(const G4int idx_part, const G4int idx_alt, const G4double &value);
+    static const uint nbp = 2;
+    static const uint nbalt_max = 6;
+    static const uint ngride = 256;
+    static const uint ngridm = 128;
+    uint PART_SPEC[nbp][nbalt_max][ngride];
+    uint PART_MOM_X[nbp][nbalt_max][ngridm];
+    uint PART_MOM_Y[nbp][nbalt_max][ngridm];
+    uint PART_MOM_Z[nbp][nbalt_max][ngridm];
+    uint counter_up[nbp][nbalt_max];
+    uint counter_down[nbp][nbalt_max];
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     G4String asciiFileName1;
 
     G4int NB_OUTPUT_ = 0;
@@ -106,33 +100,19 @@ private:
 
     //    bool not_contains(const G4int &x, const std::vector<G4int> &v);
 
-    G4double
-    get_scale(const G4double alt);
+    G4double get_scale(const G4double alt);
 
-    G4double
-    interpolate(std::vector<G4double> &xData, std::vector<G4double> &yData, G4double x, bool extrapolate);
+    G4double interpolate(std::vector<G4double> &xData, std::vector<G4double> &yData, G4double x, bool extrapolate);
 
     ////////////////////////////////////////////////////
 
     std::vector<double> ENER_GRID;
     std::vector<double> MOM_GRID;
 
-    std::array<std::array<std::vector<uint>, 3>, 3> SPEC_PART;
 
-    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_X;
-    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Y;
-    std::array<std::array<std::vector<uint>, 3>, 3> PART_MOM_Z;
+    std::vector<double> get_ener_grid();
 
-    void
-    fill_histogram(const G4int idx_part,
-                   const G4int idx_alt,
-                   const std::vector<double> &GRID,
-                   std::array<std::array<std::vector<uint>, 3>, 3> &COUNTS,
-                   const G4double &value);
+    std::vector<double> get_MOM_grid();
 
-    std::vector<double>
-    get_ener_grid();
 
-    std::vector<double>
-    get_MOM_grid();
 };

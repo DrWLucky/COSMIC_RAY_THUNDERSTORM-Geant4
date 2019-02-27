@@ -24,17 +24,15 @@ SensitiveDet::~SensitiveDet()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-SensitiveDet::Initialize(G4HCofThisEvent *) // executed at begin of each event
+void SensitiveDet::Initialize(G4HCofThisEvent *) // executed at begin of each event
 {
     //    RECORDED_LIST.clear();
-    Settings::current_efield_status = Settings::initial_efield_status;
+    settings->current_efield_status = settings->initial_efield_status;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool
-SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
+G4bool SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
 {
     given_altitude_particle_record(aStep);
 
@@ -43,19 +41,17 @@ SensitiveDet::ProcessHits(G4Step *aStep, G4TouchableHistory * /*ROhist*/)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-SensitiveDet::EndOfEvent(G4HCofThisEvent * /*HCE*/)
+void SensitiveDet::EndOfEvent(G4HCofThisEvent * /*HCE*/)
 {
     // RK : see EndOfEventAction method in EventAction.cc
 
     //    RECORDED_LIST.clear(); // redundant, but won't hurt
-    Settings::current_efield_status = Settings::initial_efield_status;
+    settings->current_efield_status = settings->initial_efield_status;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-SensitiveDet::given_altitude_particle_record(const G4Step *)
+void SensitiveDet::given_altitude_particle_record(const G4Step *)
 {
     //    const G4int PDG_nb = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
@@ -63,12 +59,12 @@ SensitiveDet::given_altitude_particle_record(const G4Step *)
 
     //    thePrePoint = aStep->GetPreStepPoint();
 
-    //    if (std::abs(thePrePoint->GetPosition().x()) > Settings::EFIELD_XY_HALF_SIZE * km)
+    //    if (std::abs(thePrePoint->GetPosition().x()) > settings->EFIELD_XY_HALF_SIZE * km)
     //        {
     //            return;
     //        }
 
-    //    if (std::abs(thePrePoint->GetPosition().z()) > Settings::EFIELD_XY_HALF_SIZE * km)
+    //    if (std::abs(thePrePoint->GetPosition().z()) > settings->EFIELD_XY_HALF_SIZE * km)
     //        {
     //            return;
     //        }
@@ -96,19 +92,19 @@ SensitiveDet::given_altitude_particle_record(const G4Step *)
     //    det_part.direction = sign_momy;
     //    det_part.ID = ID_part;
 
-    //    if (ener > Settings::ENERGY_MIN && ener < Settings::ENERGY_MAX && is_not_recorded_ID(det_part))
-    //        //            if (aStep->GetTrack()->GetKineticEnergy() > Settings::ENERGY_MIN)
+    //    if (ener > settings->ENERGY_MIN_RECORD && ener < settings->ENERGY_MAX_RECORD && is_not_recorded_ID(det_part))
+    //        //            if (aStep->GetTrack()->GetKineticEnergy() > settings->ENERGY_MIN_RECORD)
     //        {
 
     //            if (momy > 0.0)
     //                {
     //                    if (PDG_nb == 22)
     //                        {
-    //                            analysis->photon_counter_up++;
+    //                            analysis->muonP_counter_up++;
     //                        }
     //                    else if (PDG_nb == 11)
     //                        {
-    //                            analysis->electron_counter_up++;
+    //                            analysis->muonN_counter_up++;
     //                        }
     //                    else if (PDG_nb == -11)
     //                        {
@@ -120,11 +116,11 @@ SensitiveDet::given_altitude_particle_record(const G4Step *)
     //                {
     //                    if (PDG_nb == 22)
     //                        {
-    //                            analysis->photon_counter_down++;
+    //                            analysis->muonP_counter_down++;
     //                        }
     //                    else if (PDG_nb == 11)
     //                        {
-    //                            analysis->electron_counter_down++;
+    //                            analysis->muonN_counter_down++;
     //                        }
     //                    else if (PDG_nb == -11)
     //                        {
@@ -154,16 +150,14 @@ SensitiveDet::given_altitude_particle_record(const G4Step *)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-SensitiveDet::get_RECORD_ALT_IN_KM() const
+G4double SensitiveDet::get_RECORD_ALT_IN_KM() const
 {
     return RECORD_ALT_IN_KM;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4int
-SensitiveDet::get_ID_SD() const
+G4int SensitiveDet::get_ID_SD() const
 {
     return ID_SD;
 }

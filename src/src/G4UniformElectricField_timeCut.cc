@@ -42,10 +42,7 @@ G4UniformElectricField_timeCut::G4UniformElectricField_timeCut(G4double vField, 
 {
     if ((vField < 0) || (vTheta < 0) || (vTheta > pi) || (vPhi < 0) || (vPhi > twopi))
     {
-        G4Exception("G4UniformElectricField_timeCut::G4UniformElectricField_timeCut()",
-                    "GeomField0002",
-                    FatalException,
-                    "Invalid parameters.");
+        G4Exception("G4UniformElectricField_timeCut::G4UniformElectricField_timeCut()", "GeomField0002", FatalException, "Invalid parameters.");
     }
 
     fFieldComponents[0] = 0.0;
@@ -56,23 +53,21 @@ G4UniformElectricField_timeCut::G4UniformElectricField_timeCut(G4double vField, 
     fFieldComponents[5] = vField * std::cos(vTheta);
 }
 
-G4Field *
-G4UniformElectricField_timeCut::Clone() const
+G4Field *G4UniformElectricField_timeCut::Clone() const
 {
-    return new G4UniformElectricField_timeCut(G4ThreeVector(fFieldComponents[3],
-                                                            fFieldComponents[4],
-                                                            fFieldComponents[5]));
+    return new G4UniformElectricField_timeCut(G4ThreeVector(fFieldComponents[3], fFieldComponents[4], fFieldComponents[5]));
 }
 
 G4UniformElectricField_timeCut::~G4UniformElectricField_timeCut()
 {
 }
 
-G4UniformElectricField_timeCut &
-G4UniformElectricField_timeCut::operator=(const G4UniformElectricField_timeCut &p)
+G4UniformElectricField_timeCut &G4UniformElectricField_timeCut::operator=(const G4UniformElectricField_timeCut &p)
 {
     if (&p == this)
+    {
         return *this;
+    }
 
     G4ElectricField::operator=(p);
 
@@ -85,14 +80,12 @@ G4UniformElectricField_timeCut::operator=(const G4UniformElectricField_timeCut &
 }
 
 // ------------------------------------------------------------------------
-void
-G4UniformElectricField_timeCut::GetFieldValue(const G4double pos[4], G4double *fieldBandE) const
+void G4UniformElectricField_timeCut::GetFieldValue(const G4double pos[4], G4double *fieldBandE) const
 {
 
     //     G4double radius_squared = (pos[0]*pos[0]+pos[2]*pos[2])/(km*km);
 
-    if (std::abs(pos[0]) > Settings::EFIELD_XY_HALF_SIZE * km || std::abs(pos[2]) > Settings::EFIELD_XY_HALF_SIZE * km
-        || Settings::current_efield_status == Settings::OFF)
+    if (std::abs(pos[0]) > settings->EFIELD_XY_HALF_SIZE * km || std::abs(pos[2]) > settings->EFIELD_XY_HALF_SIZE * km || settings->current_efield_status == settings->OFF)
     {
         fieldBandE[0] = 0.0;
         fieldBandE[1] = 0.0;

@@ -43,19 +43,15 @@ public:
     ~PhysicsList() override;
 
 public:
-    void
-    ConstructParticle() override;
+    void ConstructParticle() override;
 
-    void
-    SetCuts() override;
+    void SetCuts() override;
 
     //        void AddStepMax();
-    void
-    Add_Step_Maxs();
+    void Add_Step_Maxs();
 
 private:
-    void
-    Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma);
+    void Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

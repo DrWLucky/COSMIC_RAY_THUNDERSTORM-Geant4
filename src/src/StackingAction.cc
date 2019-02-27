@@ -12,37 +12,35 @@
 
 BaseStackingAction::BaseStackingAction()
 {
-    TIME_STEP = Settings::DELTA_T;
+    TIME_STEP = settings->DELTA_T;
 }
 
 BaseStackingAction::~BaseStackingAction()
 {
 }
 
-void
-BaseStackingAction::PrepareNewEvent()
+void BaseStackingAction::PrepareNewEvent()
 {
     LIST_ENERGETIC_PART_IDS.clear();
 
     VARIABLE_TIME_LIMIT = 11.0 * millisecond; // propagation time of light from 50 km to about 15 km
     EVENT_NB++;
 
-    Settings::current_efield_status = Settings::initial_efield_status;
+    settings->current_efield_status = settings->initial_efield_status;
 
-    Settings::VARIABLE_TIME_LIMIT = VARIABLE_TIME_LIMIT;
+    settings->VARIABLE_TIME_LIMIT = VARIABLE_TIME_LIMIT;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-G4ClassificationOfNewTrack
-BaseStackingAction::ClassifyNewTrack(const G4Track *aTrack)
+G4ClassificationOfNewTrack BaseStackingAction::ClassifyNewTrack(const G4Track *aTrack)
 {
-    if (Settings::current_efield_status == Settings::OFF)
+    if (settings->current_efield_status == settings->OFF)
+    {
         return fUrgent;
+    }
 
-    if (!is_inside_eField_region(aTrack->GetPosition().y() / km,
-                                 aTrack->GetPosition().x() / km,
-                                 aTrack->GetPosition().z() / km))
+    if (!is_inside_eField_region(aTrack->GetPosition().y() / km, aTrack->GetPosition().x() / km, aTrack->GetPosition().z() / km))
     {
         return fUrgent; // ignore if we are not in the E-field region
     }
@@ -74,8 +72,7 @@ BaseStackingAction::ClassifyNewTrack(const G4Track *aTrack)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void
-BaseStackingAction::print_status()
+void BaseStackingAction::print_status()
 {
     G4cout << "current max time : " << VARIABLE_TIME_LIMIT / microsecond << " microsecond" << G4endl;
     G4cout << ">0.1 MeV electron count : " << LIST_ENERGETIC_PART_IDS.size() << G4endl;
@@ -85,51 +82,50 @@ BaseStackingAction::print_status()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void
-BaseStackingAction::NewStage() // called when the "Urgent stack" is empty
+void BaseStackingAction::NewStage() // called when the "Urgent stack" is empty
 // and the particles in the "waiting stack" are transfered to the "Urgent stack"
 {
     //    check_PART_NB_LIMIT();
 
-    if (Settings::current_efield_status == Settings::OFF)
+    if (settings->current_efield_status == settings->OFF)
+    {
         return;
+    }
 
     LIST_ENERGETIC_PART_IDS.clear();
 
     VARIABLE_TIME_LIMIT += TIME_STEP;
     //    LIST_ENERGETIC_PART_IDS.clear();
     //    print_status();
-    Settings::VARIABLE_TIME_LIMIT = VARIABLE_TIME_LIMIT;
+    settings->VARIABLE_TIME_LIMIT = VARIABLE_TIME_LIMIT;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void
-BaseStackingAction::check_PART_NB_LIMIT()
+void BaseStackingAction::check_PART_NB_LIMIT()
 {
     if (LIST_ENERGETIC_PART_IDS.size() > ENERGETIC_PART_NB_LIMIT)
     {
-        Settings::current_efield_status = Settings::OFF;
+        settings->current_efield_status = settings->OFF;
         LIST_ENERGETIC_PART_IDS.clear();
-        Settings::RREA_PART_NB_LIMIT_HAS_BEEN_REACHED = 1;
+        settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED = 1;
     }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-bool
-BaseStackingAction::does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS)
+bool BaseStackingAction::does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS)
 {
     if (LIST_IDS.empty())
+    {
         return true;
+    }
 
     return !(std::find(LIST_IDS.begin(), LIST_IDS.end(), ID) != LIST_IDS.end());
 }
 
-bool
-BaseStackingAction::is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz)
+bool BaseStackingAction::is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz)
 // alt assumed in km
 {
-    return alt > alt_min && alt < alt_max && std::fabs(xx) < Settings::EFIELD_XY_HALF_SIZE
-        && std::fabs(zz) < Settings::EFIELD_XY_HALF_SIZE;
+    return alt > alt_min && alt < alt_max && std::fabs(xx) < settings->EFIELD_XY_HALF_SIZE && std::fabs(zz) < settings->EFIELD_XY_HALF_SIZE;
 }

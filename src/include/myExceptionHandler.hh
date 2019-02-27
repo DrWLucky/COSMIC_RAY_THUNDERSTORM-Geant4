@@ -60,18 +60,12 @@ public:
 
     ~myExceptionHandler() override;
 
-    G4int
-    operator==(const myExceptionHandler &right) const;
+    G4int operator==(const myExceptionHandler &right) const;
 
-    G4int
-    operator!=(const myExceptionHandler &right) const;
+    G4int operator!=(const myExceptionHandler &right) const;
 
 public: // with description
-    virtual G4bool
-    Notify(const char *originOfException,
-           const char *exceptionCode,
-           G4ExceptionSeverity severity,
-           const char *description);
+    virtual G4bool Notify(const char *originOfException, const char *exceptionCode, G4ExceptionSeverity severity, const char *description);
     // Virtual method which will be invoked by G4StateManager when
     // G4Exception occurs.
     // If TRUE returned, core dump will be generated, while FALSE returned,
@@ -80,8 +74,7 @@ public: // with description
 private:
     myExceptionHandler(const myExceptionHandler &right);
 
-    myExceptionHandler &
-    operator=(const myExceptionHandler &right);
+    myExceptionHandler &operator=(const myExceptionHandler &right);
 
     G4int verbosity = 0;
 };

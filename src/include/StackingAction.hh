@@ -51,41 +51,35 @@ public:
     ~BaseStackingAction() override;
 
 public:
-    G4ClassificationOfNewTrack
-    ClassifyNewTrack(const G4Track *aTrack) override;
+    G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track *aTrack) override;
 
-    void
-    NewStage() override;
+    void NewStage() override;
 
-    void
-    PrepareNewEvent() override;
+    void PrepareNewEvent() override;
 
 private:
-    bool
-    does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS);
 
-    void
-    print_status();
+    Settings *settings = Settings::getInstance();
 
-    bool
-    is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+    bool does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS);
 
-    void
-    check_PART_NB_LIMIT();
+    void print_status();
 
-public:
+    bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+
+    void check_PART_NB_LIMIT();
+
 protected:
     G4StackManager *stackManager;
     //        G4String part_name;
     std::vector<G4int> LIST_ENERGETIC_PART_IDS;
     //        std::vector<G4double> LIST_ENERGIES;
     G4double VARIABLE_TIME_LIMIT;
-    G4double TIME_STEP = -77.88
-        * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche length (time)
+    G4double TIME_STEP = -77.88 * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche length (time)
     const G4double ENER_THRES = 800.0 * keV;
     const uint ENERGETIC_PART_NB_LIMIT = 10000;
     uint EVENT_NB = 0;
 
-    G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
-    G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
 };

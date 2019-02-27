@@ -43,16 +43,16 @@ public: // with description
 
     ~G4UniformElectricField_timeCut() override;
 
-    G4UniformElectricField_timeCut &
-    operator=(const G4UniformElectricField_timeCut &p);
+    G4UniformElectricField_timeCut &operator=(const G4UniformElectricField_timeCut &p);
     // Copy constructor and assignment operator
 
-    void
-    GetFieldValue(const G4double pos[4], G4double *field) const override;
+    void GetFieldValue(const G4double pos[4], G4double *field) const override;
 
-    G4Field *
-    Clone() const override;
+    G4Field *Clone() const override;
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     G4double fFieldComponents[6];
 };

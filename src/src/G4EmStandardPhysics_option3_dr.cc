@@ -100,8 +100,7 @@ G4_DECLARE_PHYSCONSTR_FACTORY(G4EmStandardPhysics_option3_dr);
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4EmStandardPhysics_option3_dr::G4EmStandardPhysics_option3_dr(G4int ver, const G4String &) : G4VPhysicsConstructor(
-    "G4EmStandard_opt3"), verbose(ver)
+G4EmStandardPhysics_option3_dr::G4EmStandardPhysics_option3_dr(G4int ver, const G4String &) : G4VPhysicsConstructor("G4EmStandard_opt3"), verbose(ver)
 {
     G4EmParameters *param = G4EmParameters::Instance();
     param->SetDefaults();
@@ -124,8 +123,7 @@ G4EmStandardPhysics_option3_dr::~G4EmStandardPhysics_option3_dr()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-G4EmStandardPhysics_option3_dr::ConstructParticle()
+void G4EmStandardPhysics_option3_dr::ConstructParticle()
 {
     // gamma
     G4Gamma::Gamma();
@@ -156,8 +154,7 @@ G4EmStandardPhysics_option3_dr::ConstructParticle()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-G4EmStandardPhysics_option3_dr::ConstructProcess()
+void G4EmStandardPhysics_option3_dr::ConstructProcess()
 {
     if (verbose > 1)
     {
@@ -333,16 +330,11 @@ G4EmStandardPhysics_option3_dr::ConstructProcess()
             ph->RegisterProcess(pp, particle);
             ph->RegisterProcess(pnuc, particle);
         }
-        else if (particleName == "B+" || particleName == "B-" || particleName == "D+" || particleName == "D-"
-            || particleName == "Ds+" || particleName == "Ds-" || particleName == "anti_He3"
-            || particleName == "anti_alpha" || particleName == "anti_deuteron" || particleName == "anti_lambda_c+"
-            || particleName == "anti_omega-" || particleName == "anti_sigma_c+" || particleName == "anti_sigma_c++"
-            || particleName == "anti_sigma+" || particleName == "anti_sigma-" || particleName == "anti_triton"
-            || particleName == "anti_xi_c+" || particleName == "anti_xi-" || particleName == "deuteron"
-            || particleName == "lambda_c+" || particleName == "omega-" || particleName == "sigma_c+"
-            || particleName == "sigma_c++" || particleName == "sigma+" || particleName == "sigma-"
-            || particleName == "tau+" || particleName == "tau-" || particleName == "triton" || particleName == "xi_c+"
-            || particleName == "xi-")
+        else if (particleName == "B+" || particleName == "B-" || particleName == "D+" || particleName == "D-" || particleName == "Ds+" || particleName == "Ds-" || particleName == "anti_He3" || particleName == "anti_alpha" ||
+                 particleName == "anti_deuteron" || particleName == "anti_lambda_c+" || particleName == "anti_omega-" || particleName == "anti_sigma_c+" || particleName == "anti_sigma_c++" || particleName == "anti_sigma+" ||
+                 particleName == "anti_sigma-" || particleName == "anti_triton" || particleName == "anti_xi_c+" || particleName == "anti_xi-" || particleName == "deuteron" || particleName == "lambda_c+" || particleName == "omega-" ||
+                 particleName == "sigma_c+" || particleName == "sigma_c++" || particleName == "sigma+" || particleName == "sigma-" || particleName == "tau+" || particleName == "tau-" || particleName == "triton" || particleName == "xi_c+" ||
+                 particleName == "xi-")
         {
 
             ph->RegisterProcess(hmsc, particle);

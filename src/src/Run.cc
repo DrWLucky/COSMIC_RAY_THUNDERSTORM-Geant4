@@ -16,8 +16,7 @@ Run::~Run()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-Run::EndOfRun()
+void Run::EndOfRun()
 {
 
 } // Run::EndOfRun

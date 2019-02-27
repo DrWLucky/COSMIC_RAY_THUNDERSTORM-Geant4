@@ -30,10 +30,12 @@ public:
 
     ~SteppingAction() override;
 
-    void
-    UserSteppingAction(const G4Step *aStep) override;
+    void UserSteppingAction(const G4Step *aStep) override;
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     AnalysisManager *analysis = AnalysisManager::getInstance();
     DetectorConstruction *fDetector;
     EventAction *fEventAction;
@@ -43,19 +45,17 @@ private:
     const G4int PDG_elec = 11;
     const G4int PDG_posi = -11;
 
-    double
-    get_wall_time();
+    double get_wall_time();
 
     double computation_time_length_for_event_limit = 900.; // 15 minutes
 
     //    G4int part_ID;
     //    G4int previous_part_ID;
 
-    bool
-    is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+    bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
 
-    G4double alt_min = Settings::EFIELD_REGION_ALT_CENTER - Settings::EFIELD_REGION_LEN / 2.0; // km
-    G4double alt_max = Settings::EFIELD_REGION_ALT_CENTER + Settings::EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
+    G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
 
     uint nb_skip = 0;
 };

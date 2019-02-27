@@ -36,29 +36,24 @@ public:
 
     ~RegionInformation() override;
 
-    void
-    Print() const override;
+    void Print() const override;
 
-    inline void
-    Set_World(G4bool v = true)
+    inline void Set_World(G4bool v = true)
     {
         is_world_ = v;
     }
 
-    inline G4bool
-    is_World() const
+    inline G4bool is_World() const
     {
         return is_world_;
     }
 
-    inline void
-    Set_detection(G4bool v = true)
+    inline void Set_detection(G4bool v = true)
     {
         is_detection_ = v;
     }
 
-    inline G4bool
-    is_detection() const
+    inline G4bool is_detection() const
     {
         return is_detection_;
     }

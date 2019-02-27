@@ -18,19 +18,19 @@ public:
     ~EventAction() override;
 
 public:
-    void
-    BeginOfEventAction(const G4Event *) override;
+    void BeginOfEventAction(const G4Event *) override;
 
-    void
-    EndOfEventAction(const G4Event *) override;
+    void EndOfEventAction(const G4Event *) override;
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     G4int print_nb = 1; // just initialisation
 
     AnalysisManager *analysis = AnalysisManager::getInstance();
 
-    double
-    get_wall_time() const;
+    double get_wall_time() const;
 
     double time_begin_event = -5.;
     double time_end_event = -5.;

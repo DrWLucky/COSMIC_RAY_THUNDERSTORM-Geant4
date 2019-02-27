@@ -28,8 +28,7 @@
 
 // ------------------------------------------------------------------------
 
-double
-get_wall_time_main()
+double get_wall_time_main()
 // returns time in seconds
 {
     struct timeval tv{};
@@ -40,72 +39,69 @@ get_wall_time_main()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
+
+    Settings *settings = Settings::getInstance();
+
     setlocale(LC_ALL, "C"); // just in case, to avoid potential bug ("," <-> ".")
 
     G4String Mode = "run"; // visualization (visu) or run
-    G4String NB_PARTICLES_TO_SHOOT = "2";
-    G4int NB_PARTICLES_TO_GET = 1000;
+    G4String NB_PARTICLES_TO_SHOOT = "20";
+    G4int NB_PARTICLES_TO_GET = 10000;
 
     G4double WT1 = get_wall_time_main();
 
-    long start = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+    std::chrono::high_resolution_clock m_clock;
+    long start = std::chrono::duration_cast<std::chrono::nanoseconds>(m_clock.now().time_since_epoch()).count();
     G4cout << start << " ns" << G4endl;
 
-    Settings::RANDOM_SEED = start;
+    settings->RANDOM_SEED = start;
 
     if (argc >= 4)
     {
         NB_PARTICLES_TO_GET = std::stoi(argv[1]);
-        Settings::EFIELD_REGION_ALT_CENTER = std::stod(argv[2]);
-        Settings::EFIELD_REGION_LEN = std::stod(argv[3]);
-        Settings::POTENTIAL_VALUE = std::stod(argv[4]);
+        settings->EFIELD_REGION_ALT_CENTER = std::stod(argv[2]);
+        settings->EFIELD_REGION_LEN = std::stod(argv[3]);
+        settings->POTENTIAL_VALUE = std::stod(argv[4]);
 
-        Settings::RECORD_ALTITUDES.clear();
+        settings->RECORD_ALTITUDES.clear();
 
         for (int kk = 5; kk < argc; ++kk) // loop over all requested record altitudes
         {
-            Settings::RECORD_ALTITUDES.push_back(std::stod(argv[kk]));
+            settings->RECORD_ALTITUDES.push_back(std::stod(argv[kk]));
             //                    G4cout << argv[kk] << G4endl;
         }
 
         Mode = "run";
 
-        if (Settings::EFIELD_REGION_ALT_CENTER > 20.0)
+        if (settings->EFIELD_REGION_ALT_CENTER > 20.0)
         {
             G4cout << "ERROR. For this version of the code, Efield should be set with a center below 20 km" << G4endl;
             std::abort();
         }
+
+        if (settings->POTENTIAL_VALUE == 0.)
+        {
+            settings->current_efield_status = settings->OFF;
+        }
         else
         {
-            Settings::current_efield_status = Settings::BELOW_PLANE;
+            settings->current_efield_status = settings->ON;
         }
 
-        if (Settings::POTENTIAL_VALUE == 0.)
-        {
-            Settings::current_efield_status = Settings::OFF;
-        }
-
-        Settings::initial_efield_status = Settings::current_efield_status;
+        settings->initial_efield_status = settings->current_efield_status;
     }
     else
     {
         Mode = "run";
-        Settings::RECORD_ALTITUDES.push_back(13.0); // km
-        //            Settings::RECORD_ALTITUDES.push_back(12.0);
-        //            Settings::RECORD_ALTITUDES.push_back(12.5);
+        settings->RECORD_ALTITUDES.push_back(3.0); // km
     }
 
-    if (Settings::EFIELD_REGION_ALT_CENTER > 20.0)
+    if (settings->EFIELD_REGION_ALT_CENTER > 20.0)
     {
-        G4cout << "ERROR. For this version of the code, Efield should be set with a center below 20 km" << G4endl;
+        G4cout << "ERROR. Efield should be set with a center below 20 km" << G4endl;
         std::abort();
-    }
-    else
-    {
-        Settings::current_efield_status = Settings::BELOW_PLANE;
     }
 
     // choose the Random engine
@@ -119,12 +115,7 @@ main(int argc, char **argv)
 
     //    analysis->check_if_should_use_stacking_action();
 
-#ifdef G4MULTITHREADED
-    G4MTRunManager* runManager = new G4MTRunManager;
-    runManager->SetNumberOfThreads(G4Threading::G4GetNumberOfCores());
-#else
     auto *runManager = new G4RunManager;
-#endif
 
     //    myExceptionHandler *ExceptionHandler = new myExceptionHandler(0); // G4ExceptionHandler class with verbosity option (0 -> silent)
 

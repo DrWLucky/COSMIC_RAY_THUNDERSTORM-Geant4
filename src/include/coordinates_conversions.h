@@ -54,17 +54,12 @@ struct geodetic_coords
 
 // PROTOTYPES
 
-void
-geocentric_to_ecef(struct geocentric_coords *input, struct ecef_coords *output);
+void geocentric_to_ecef(struct geocentric_coords *input, struct ecef_coords *output);
 
-void
-geodetic_to_ecef(struct geodetic_coords *input, struct ecef_coords *output);
+void geodetic_to_ecef(struct geodetic_coords *input, struct ecef_coords *output);
 
-void
-ecef_to_geocentric(struct ecef_coords *input, struct geocentric_coords *output);
+void ecef_to_geocentric(struct ecef_coords *input, struct geocentric_coords *output);
 
-void
-ecef_to_geodetic(struct ecef_coords *input, struct geodetic_coords *output);
+void ecef_to_geodetic(struct ecef_coords *input, struct geodetic_coords *output);
 
-void
-ecef_to_geodetic_olson(struct ecef_coords *input, struct geodetic_coords *output);
+void ecef_to_geodetic_olson(struct ecef_coords *input, struct geodetic_coords *output);

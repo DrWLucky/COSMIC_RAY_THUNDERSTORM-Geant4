@@ -19,14 +19,12 @@ public:
 
 public:
     // This method is dummy for physics
-    virtual void
-    ConstructParticle();
+    virtual void ConstructParticle();
 
     // This method will be invoked in the Construct() method.
     // each physics process will be instantiated and
     // registered to the process manager of each particle type
-    virtual void
-    ConstructProcess();
+    virtual void ConstructProcess();
 
 private:
     // G4RadioactiveDecay*  theRadioactiveDecay;

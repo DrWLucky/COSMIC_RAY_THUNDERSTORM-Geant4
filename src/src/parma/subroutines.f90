@@ -18,7 +18,7 @@ contains
         ! e: energy in MeV/n
         ! g: local geometry effect
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
 
         getSpec = 0.0
         if(ip==0) then  ! neutron
@@ -40,16 +40,16 @@ contains
     ! *******************************************************
     function getFl(ip, s, r, d)  ! get Fl value, s:solar modulation potential, r:Cut off rigidity, d:depth
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (npart = 11) ! number of particle type, 0:neutron, 1:proton, 2:alpha, 3:electron, 4:positron, 5:photon, 6-11: Li-O
         parameter (nBdata = 4) ! B(1) - B(4) : Fl= B(1)*(exp(-B(2)*d)-B(3)*exp(-B(4)*d))
         parameter (nAdata = 10) ! A(1) - A(10) : Bmin = A(1)+A(2)*r+A(3)/(1+exp((r-A(4))/A(5))), Bmin = A(6)+A(7)*r+A(8)/(1+exp((r-A(9))/A(10)))
         parameter (nsor = 2) ! solar minimum & maximum
         character chatmp1*1, chatmp5*5
         character, save :: pname(0:npart)*6
-        real(kind=8), save :: A(0:npart, nBdata, nAdata), B(nBdata)
-        real(kind=8), save :: spot(nsor), FL(nsor)
-        integer(kind=4), save :: ifirst
+        real(kind = 8), save :: A(0:npart, nBdata, nAdata), B(nBdata)
+        real(kind = 8), save :: spot(nsor), FL(nsor)
+        integer(kind = 4), save :: ifirst
         data ifirst/0/
         data spot/0.0, 150.0/
         data pname/'neutro', 'proton', 'alphaa', 'elemag', 'elemag', 'elemag', &
@@ -121,7 +121,7 @@ contains
     ! **********************************************************
     function getFFPfromW(s) ! get FFP (MV) from W (sun spot number)
         ! **********************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         if(s>=0) then
             getFFPfromW = 370.0 + 3.0e-1 * s**1.45 ! FFP in MV
         else
@@ -133,7 +133,7 @@ contains
     ! **********************************************************
     function getRfromE(iz, ia, Ek, Em) ! get Rigidity in MV from Kinetic Energy (MeV/n)
         ! **********************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         getRfromE = sqrt((ia * Ek)**2 + 2 * Ek * ia * Em) / iz
         return
     end
@@ -141,7 +141,7 @@ contains
     ! **********************************************************
     function getEfromR(iz, Rm, COR) ! get Kinetic Energy (MeV) from Rigidity (MV)
         ! **********************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         getEfromR = sqrt((iz * COR)**2 + Rm**2) - Rm
         return
     end
@@ -149,14 +149,14 @@ contains
     ! *******************************************************
     function getPow(ip, d, r)  ! get Power of solar modulation dependence, r:Cut off rigidity, d:depth
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (npart = 13) ! number of particle type, neutron, proton, alpha, photon, electron positron, mu+, mu-, Li-O
         parameter (nBdata = 2) ! B(1) - B(4) : Pow = b1 + b2*d
         parameter (nAdata = 5) ! A(1) - A(5) : B = A(1)+A(2)*r+A(3)/(1+exp((r-A(4))/A(5)))
         character chatmp1*1, chatmp5*5
         character, save :: pname(0:npart)*6
-        real(kind=8), save :: A(0:npart, nBdata, nAdata), B(nBdata)
-        integer(kind=4), save :: ifirst
+        real(kind = 8), save :: A(0:npart, nBdata, nAdata), B(nBdata)
+        integer(kind = 4), save :: ifirst
         data ifirst/0/
         data pname/'neutro', 'proton', 'alphaa', 'elemag', 'elemag', 'elemag', 'muon--', 'muon--', &
                 & 'ions  ', 'ions  ', 'ions  ', 'ions  ', 'ions  ', 'ions  '/
@@ -209,9 +209,9 @@ contains
         parameter(nBdata = 6)
         parameter(ndep = 26)
         parameter(npart = 3) ! high-altitude correction is necessary only for electron, positron, photon
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: A(0:npart, nBdata, ndep), B(nBdata)
-        real(kind=8), save :: dep(ndep)
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: A(0:npart, nBdata, ndep), B(nBdata)
+        real(kind = 8), save :: dep(ndep)
         character chatmp1*1, chatmp5*5
         character pname(npart)*2
         data ifirst/0/
@@ -270,11 +270,11 @@ contains
         !     g:local geometry parameter, 0=< g =< 1: water weight fraction, 10:no-earth, 100:blackhole, -10< g < 0: pilot, g < -10: cabin
         !     e:neutron energy (MeV)
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter(nA = 12) ! number of basic spectrum parameter
         parameter(nG = 6) ! number of geometry parameter
-        real(kind=8), save :: A(nA) ! basic spectrum parameter
-        real(kind=8), save :: geo(nG) ! geometry parameter
+        real(kind = 8), save :: A(nA) ! basic spectrum parameter
+        real(kind = 8), save :: geo(nG) ! geometry parameter
         data ifirst/0/
         data airbus/2.45/  ! weight of airbus340 (100t)
         data Eth/2.5e-8/  ! themal energy
@@ -329,10 +329,10 @@ contains
     ! *******************************************************
     subroutine getGpara(g, geo) ! get surroudning environment parameters
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter(nG = 6) ! number of geometry parameter
         dimension geo(nG) ! geometry parameter
-        real(kind=8), save :: P(24) ! Input parameters read from input file, P(1)-P(3) from Geo-Dep, P(4)-P(14) from Water-Dep, P(15)-P(24) from aircraft-dep
+        real(kind = 8), save :: P(24) ! Input parameters read from input file, P(1)-P(3) from Geo-Dep, P(4)-P(14) from Water-Dep, P(15)-P(24) from aircraft-dep
         character chatmp1*1, chatmp4*4
         call setlocale_to_avoid_bug()
 
@@ -383,11 +383,11 @@ contains
     ! *******************************************************
     function getA4(r, d)  ! get A4 value, s:solar modulation potential, r:Cut off rigidity, d:depth
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (nBdata = 4) ! B(1) - B(4) : Fl= B(1)*(exp(-B(2)*d)-B(3)*exp(-B(4)*d))
         parameter (nAdata = 6) ! A(1) - A(6) : B = A(1)+A(2)/(1+exp((r-A(3))/A(4))), A(5):A(1) for APmax, A(6):A(3) for APmax
         character chatmp1*1, chatmp5*5
-        real(kind=8), save :: A(nAdata), B(nBdata)
+        real(kind = 8), save :: A(nAdata), B(nBdata)
         call setlocale_to_avoid_bug()
 
         if(B(2)==0.0d0) then ! first time
@@ -414,11 +414,11 @@ contains
     ! *******************************************************
     function getA12(r, d)  ! get Fl value, s:solar modulation potential, r:Cut off rigidity, d:depth
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (nBdata = 4) ! B(1) - B(4) : Fl= B(1)*(exp(-B(2)*d)-B(3)*exp(-B(4)*d))
         parameter (nAdata = 6) ! A(1) - A(6) : B = A(1)+A(2)/(1+exp((r-A(3))/A(4))), A(5):A(1) for APmax, A(6):A(3) for APmax
         character chatmp1*1, chatmp5*5
-        real(kind=8), save :: A(nBdata, nAdata), B(nBdata)
+        real(kind = 8), save :: A(nBdata, nAdata), B(nBdata)
         call setlocale_to_avoid_bug()
 
         if(B(4)==0.0d0) then ! first time
@@ -454,7 +454,7 @@ contains
         parameter(mpara = 5) ! number of parameters to COR dependence
         parameter(ndep = 26) ! number of depth
         parameter(nsol = 2) ! solar minimum and maximum
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         dimension ainp(mpara, nhensu, ndep, nsol)
         dimension dep(ndep)
         dimension b(nhensu), c(nsol) ! temporary dimension
@@ -516,7 +516,7 @@ contains
     ! ******************************************************
     function getMuonSpec(ip, s, r1, d1, e) ! get muon spectrum, ip=30:mu+, =31:mu-
         ! ******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (nPart = 2) ! Muon+ or Muon-
         parameter (nsol = 2) ! solar minimum and maximum
         parameter (nAdata = 7) ! number of A parameter
@@ -561,7 +561,7 @@ contains
     ! ******************************************************
     subroutine getAmuon(Acurr, ip, is, d, r) ! get A parameter
         ! ******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter (npart = 2) ! mu+ and mu-
         parameter (nsol = 2) ! solar minimum and maximum
         parameter (nAdata = 7) ! number of A parameter A(1) to A(7)
@@ -653,17 +653,17 @@ contains
         !     d:air depth (g/cm^2)
         !     e:ion energy (MeV/n)
         ! *******************************************************
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter(nAdata = 6)
         parameter(npart = 28)
         parameter(ngroup = 6)
 
         character chatmp1*1
 
-        real(kind=8), save :: A(nAdata, ngroup) ! parameter used in combine.for
-        real(kind=8), save :: dEdx(npart)
-        integer(kind=4), save :: iAnum(npart)
-        integer(kind=4), save :: ifirst
+        real(kind = 8), save :: A(nAdata, ngroup) ! parameter used in combine.for
+        real(kind = 8), save :: dEdx(npart)
+        integer(kind = 4), save :: iAnum(npart)
+        integer(kind = 4), save :: ifirst
 
         integer, save :: igidx(npart)    ! group index
 
@@ -719,9 +719,9 @@ contains
         parameter(nBdata = 8)
         parameter(ndep = 26)
         parameter(npart = 11) ! proton, alpha, electron, positron, photon, Li, Be, B, C, N, O
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: A(nBdata, npart, ndep), B(nBdata)
-        real(kind=8), save :: dep(ndep)
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: A(nBdata, npart, ndep), B(nBdata)
+        real(kind = 8), save :: dep(ndep)
         integer, save :: ifirst
         character chatmp1*1, chatmp5*5
         data ifirst/0/
@@ -807,8 +807,8 @@ contains
         !     Spot: Wolf number estimated from count rate of neutron monitors
         ! **********************************************************
         parameter(npart = 28)
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: Dpara(npart), alpha(npart), gamma(npart), bpara(npart) ! Data for Nymmik Model
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: Dpara(npart), alpha(npart), gamma(npart), bpara(npart) ! Data for Nymmik Model
         data Emp/938.27d0/ ! mass of proton, nucleus mass is simply assumed to be A*Emp
 
         data Dpara/1.85e4, 3.69e3, 19.50, 17.70, 49.20, 103.00, 36.70, 87.40, &
@@ -847,11 +847,11 @@ contains
         parameter(nepoint = 6)
         parameter(ngroup = 6)
         parameter(ndep = 26)
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: A(nAdata, ngroup, ndep)
-        real(kind=8), save :: dEdxTable(npart, nepoint), epoint(nepoint) ! dE/dx for each particle
-        real(kind=8), save :: dep(ndep) ! depth (g/cm2)
-        real(kind=8), save :: down
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: A(nAdata, ngroup, ndep)
+        real(kind = 8), save :: dEdxTable(npart, nepoint), epoint(nepoint) ! dE/dx for each particle
+        real(kind = 8), save :: dep(ndep) ! depth (g/cm2)
+        real(kind = 8), save :: down
         integer, save :: igidx(npart)    ! group index
         dimension B(nAdata) ! temporary used dimension
 
@@ -927,8 +927,8 @@ contains
     function get511flux(s, r, d)  ! get 511 keV photon flux in (/cm2/s)
         ! *************************************************************
         parameter(ndep = 26)
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: F511(ndep), dep(ndep)
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: F511(ndep), dep(ndep)
         character chatmp1*1
 
         data ifirst/0/
@@ -977,13 +977,13 @@ contains
         parameter(maxUS = 75) ! number of altitude bin for US-Standard Air
         parameter(maxMSIS = 129) ! number of altitude bin for NRLMSISE-00
         parameter(maxlat = 36) ! number of latitude bin for NRLMSISE-00
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: altUS(maxUS) ! altitude data for US-Standard Air 1976
-        real(kind=8), save :: altMSIS(maxMSIS) ! altitude data for NRLMSISE-00
-        real(kind=8), save :: depUS(maxUS) ! atmospheric depth data for US-Standard Air 1976
-        real(kind=8), save :: depMSIS(maxMSIS, maxlat) ! atmospheric depth data for each altitude & latitude for NRLMSISE-00
-        real(kind=8), save :: glat(maxlat) ! latitude data
-        integer(kind=4), save :: ifirst
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: altUS(maxUS) ! altitude data for US-Standard Air 1976
+        real(kind = 8), save :: altMSIS(maxMSIS) ! altitude data for NRLMSISE-00
+        real(kind = 8), save :: depUS(maxUS) ! atmospheric depth data for US-Standard Air 1976
+        real(kind = 8), save :: depMSIS(maxMSIS, maxlat) ! atmospheric depth data for each altitude & latitude for NRLMSISE-00
+        real(kind = 8), save :: glat(maxlat) ! latitude data
+        integer(kind = 4), save :: ifirst
         character chatmp1*1
         data ifirst/0/
         call setlocale_to_avoid_bug()
@@ -1052,17 +1052,17 @@ contains
         ! ******************************************************
         implicit none
 
-        real(kind=8) :: getr, cor1, cor2
-        real(kind=8), intent(in) :: cido, ckei
-        real(kind=8), save :: cordata(181, 361) ! maximum 1 deg step, +1 mean
-        real(kind=8), save :: dpido(181), dpkei(361) ! data point ido & keido
+        real(kind = 8) :: getr, cor1, cor2
+        real(kind = 8), intent(in) :: cido, ckei
+        real(kind = 8), save :: cordata(181, 361) ! maximum 1 deg step, +1 mean
+        real(kind = 8), save :: dpido(181), dpkei(361) ! data point ido & keido
         real(c_double) :: temp1, temp2, temp3
         character(len = 12) chatmp1, chatmp2, chatmp3
-        integer(kind=4), save :: mkei, mido
-        real(kind=8), save :: skei, sido
-        integer(kind=4), save :: ifirst
-        integer(kind=4), save :: ifirst2
-        integer(kind=4) :: ik, id
+        integer(kind = 4), save :: mkei, mido
+        real(kind = 8), save :: skei, sido
+        integer(kind = 4), save :: ifirst
+        integer(kind = 4), save :: ifirst2
+        integer(kind = 4) :: ik, id
         data ifirst/0/
         data ifirst2/0/
 
@@ -1145,7 +1145,7 @@ contains
         ! e: energy in MeV/n
         ! g: local geometry effect
         ! ang: cos(theta)
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         if(ip==4.and.g>=0.0d0.and.g<=1.0d0) then ! ground level muon
             emin = 1.1535d4 ! minimum energy for correction data
             if(e>=emin) then ! full correction
@@ -1177,15 +1177,15 @@ contains
         parameter(mpeach = 10) ! number of parameters to express energy dependence of each parameter
         parameter(ifour = 4)  ! 4
 
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
 
-        real(kind=8), save :: ParaEdep(mpeach, maxfit, ncor, nsur, npart) ! parameter for expressing energy-differential energy dependence
-        real(kind=8), save :: ParaEint(maxfit, ncor, nsur, npart) ! parameter for expressing energy-integrated energy dependence
-        real(kind=8), save :: depth(nsur) ! depth (g/cm2) for parameters
-        real(kind=8), save :: cor(ncor)   ! Rc (GV) for parameters
-        real(kind=8), save :: ParaAdep(maxfit, ifour) ! parameter for expressing angular distribution, 1-4 is for each depth & Rc condition
-        real(kind=8), save :: ratio1, ratio2 ! ratio must be saved
-        real(kind=8), save :: emin(npart), emax(npart) ! maximum energy
+        real(kind = 8), save :: ParaEdep(mpeach, maxfit, ncor, nsur, npart) ! parameter for expressing energy-differential energy dependence
+        real(kind = 8), save :: ParaEint(maxfit, ncor, nsur, npart) ! parameter for expressing energy-integrated energy dependence
+        real(kind = 8), save :: depth(nsur) ! depth (g/cm2) for parameters
+        real(kind = 8), save :: cor(ncor)   ! Rc (GV) for parameters
+        real(kind = 8), save :: ParaAdep(maxfit, ifour) ! parameter for expressing angular distribution, 1-4 is for each depth & Rc condition
+        real(kind = 8), save :: ratio1, ratio2 ! ratio must be saved
+        real(kind = 8), save :: emin(npart), emax(npart) ! maximum energy
         character chatmp1*1
         character pname(npart)*6
 
@@ -1312,7 +1312,7 @@ contains
         ! x: energy
         ! A: ParaEdep
         parameter(mpeach = 10) ! number of parameters to express energy dependence of each parameter
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         dimension A(mpeach)
 
         a4 = max(0.01, a(4))
@@ -1331,7 +1331,7 @@ contains
 
     subroutine AdjustParaAdep(A)
         parameter (maxfit = 8)
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         dimension A(maxfit)
         data one/1.0d0/
         data atlow/-0.05/  ! lower threshold angle for 90 degree interpolation
@@ -1357,14 +1357,14 @@ contains
     end
 
     function getint(x0, x1, a1, a2, a3)
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         getint = a1 * (x1 - x0) + a2 * (x1**(a3 + 1) - x0**(a3 + 1)) / (a3 + 1)
         return
     end
 
     function funcAng(x, a)
         parameter (maxfit = 8)
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         dimension A(maxfit)
         data atlow/-0.05/  ! lower threshold angle for 90 degree interpolation
         data athig/ 0.05/  ! higher threshold angle for 90 degree interpolation
@@ -1387,7 +1387,7 @@ contains
     end
 
     function getGmuon(emid, ang)
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         call setlocale_to_avoid_bug()
 
         elog = min(6.0, max(4.062, log10(emid))) ! parameters are effective only between 10GeV to 1 TeV
@@ -1410,8 +1410,8 @@ contains
     function getGneut(emid, ID)
         parameter(maxfit = 8)   ! number of fitting parameter for angular dependence
         parameter(maxEfit = 3)  ! number of fitting parameter for energy dependence
-        implicit real(kind=8) (a-h, o-z)
-        real(kind=8), save :: Gneut(maxEfit, maxfit)
+        implicit real(kind = 8) (a-h, o-z)
+        real(kind = 8), save :: Gneut(maxEfit, maxfit)
         data ifirst/0/
         call setlocale_to_avoid_bug()
 
@@ -1433,11 +1433,11 @@ contains
     end
 
     function BHfactor(ip, e, ang) ! Black hole factor
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter(npart = 6) ! only neutron, elepos, and photon
         parameter(nBHpara = 3) ! number of parameter
         parameter(nBHeach = 7) ! number of parameter to represent each parameter
-        real(kind=8), save :: BHpara(nBHeach, nBHpara, npart)
+        real(kind = 8), save :: BHpara(nBHeach, nBHpara, npart)
         dimension dimtmp(nBHpara) ! temporary used dimension
         character chatmp1*1, chatmp40*40
         character pname(npart)*6
@@ -1470,7 +1470,7 @@ contains
     end
 
     function doublesig(e, a) ! get double sigmoid
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         parameter(nBHeach = 7) ! number of parameter to represent each parameter
         dimension a(nBHeach)
         doublesig = a(1) + a(2) / (1 + exp((a(3) - log10(e)) / a(4))) + a(5) / (1 + exp((a(6) - log10(e)) / a(7)))
@@ -1487,11 +1487,11 @@ contains
         parameter(nday = 31)
         parameter(iymax = 2020) ! maximum year
         parameter(iymin = 1614) ! earliest year
-        implicit real(kind=8) (a-h, o-z)
+        implicit real(kind = 8) (a-h, o-z)
         real, save :: FFP(iymin:iymax, nmonth, nday)
         real, save :: FFPuso(iymin:iymax) ! 0 & nmonth+1 data are used for interpolation
         data ifirst/0/
-        integer(kind=4), save :: iystart, iyend, iysUs, iyeUs
+        integer(kind = 4), save :: iystart, iyend, iysUs, iyeUs
         call setlocale_to_avoid_bug()
 
         if(ifirst==0) then ! first time call this subroutine

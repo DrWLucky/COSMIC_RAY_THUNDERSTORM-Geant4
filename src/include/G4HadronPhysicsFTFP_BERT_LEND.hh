@@ -47,18 +47,14 @@ public:
     virtual ~G4HadronPhysicsFTFP_BERT_LEND();
 
 public:
-    virtual void
-    ConstructParticle();
+    virtual void ConstructParticle();
 
-    virtual void
-    ConstructProcess();
+    virtual void ConstructProcess();
 
 private:
-    void
-    CreateModels();
+    void CreateModels();
 
-    G4HadronicProcess *
-    FindInelasticProcess(const G4ParticleDefinition *);
+    G4HadronicProcess *FindInelasticProcess(const G4ParticleDefinition *);
 
     struct ThreadPrivate
     {

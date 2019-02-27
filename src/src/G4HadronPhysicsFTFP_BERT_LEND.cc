@@ -26,51 +26,49 @@ G4ThreadLocal G4HadronPhysicsFTFP_BERT_LEND::ThreadPrivate *G4HadronPhysicsFTFP_
 
 G4HadronPhysicsFTFP_BERT_LEND::G4HadronPhysicsFTFP_BERT_LEND(G4int) : G4VPhysicsConstructor("hInelastic FTFP_BERT_HP")
 
-    /*    , theNeutrons(0)
-     * , theBertiniNeutron(0)
-     * , theFTFPNeutron(0)
-     * , theHPNeutron(0)
-     * , thePiK(0)
-     * , theBertiniPiK(0)
-     * , theFTFPPiK(0)
-     * , thePro(0)
-     * , theBertiniPro(0)
-     * , theFTFPPro(0)
-     * , theHyperon(0)
-     * , theAntiBaryon(0)
-     * , theFTFPAntiBaryon(0)*/
-    , QuasiElastic(false)
+        /*    , theNeutrons(0)
+         * , theBertiniNeutron(0)
+         * , theFTFPNeutron(0)
+         * , theHPNeutron(0)
+         * , thePiK(0)
+         * , theBertiniPiK(0)
+         * , theFTFPPiK(0)
+         * , thePro(0)
+         * , theBertiniPro(0)
+         * , theFTFPPro(0)
+         * , theHyperon(0)
+         * , theAntiBaryon(0)
+         * , theFTFPAntiBaryon(0)*/
+        , QuasiElastic(false)
 
 /*, xsKaon(0)
  * , xsNeutronCaptureXS(0)*/
 {
 }
 
-G4HadronPhysicsFTFP_BERT_LEND::G4HadronPhysicsFTFP_BERT_LEND(const G4String &name,
-                                                             G4bool quasiElastic) : G4VPhysicsConstructor(name)
+G4HadronPhysicsFTFP_BERT_LEND::G4HadronPhysicsFTFP_BERT_LEND(const G4String &name, G4bool quasiElastic) : G4VPhysicsConstructor(name)
 
-    /*    , theNeutrons(0)
-     * , theBertiniNeutron(0)
-     * , theFTFPNeutron(0)
-     * , theHPNeutron(0)
-     * , thePiK(0)
-     * , theBertiniPiK(0)
-     * , theFTFPPiK(0)
-     * , thePro(0)
-     * , theBertiniPro(0)
-     * , theFTFPPro(0)
-     * , theHyperon(0)
-     * , theAntiBaryon(0)
-     * , theFTFPAntiBaryon(0)*/
-    , QuasiElastic(quasiElastic)
+        /*    , theNeutrons(0)
+         * , theBertiniNeutron(0)
+         * , theFTFPNeutron(0)
+         * , theHPNeutron(0)
+         * , thePiK(0)
+         * , theBertiniPiK(0)
+         * , theFTFPPiK(0)
+         * , thePro(0)
+         * , theBertiniPro(0)
+         * , theFTFPPro(0)
+         * , theHyperon(0)
+         * , theAntiBaryon(0)
+         * , theFTFPAntiBaryon(0)*/
+        , QuasiElastic(quasiElastic)
 
 /*, xsKaon(0)
  * , xsNeutronCaptureXS(0)*/
 {
 }
 
-void
-G4HadronPhysicsFTFP_BERT_LEND::CreateModels()
+void G4HadronPhysicsFTFP_BERT_LEND::CreateModels()
 {
     tpdata->theNeutrons = new G4NeutronBuilder(true); // Fission on
     tpdata->theFTFPNeutron = new G4FTFPNeutronBuilder(QuasiElastic);
@@ -97,7 +95,9 @@ G4HadronPhysicsFTFP_BERT_LEND::CreateModels()
 G4HadronPhysicsFTFP_BERT_LEND::~G4HadronPhysicsFTFP_BERT_LEND()
 {
     if (!tpdata)
+    {
         return;
+    }
 
     delete tpdata->theNeutrons;
     delete tpdata->theBertiniNeutron;
@@ -116,8 +116,7 @@ G4HadronPhysicsFTFP_BERT_LEND::~G4HadronPhysicsFTFP_BERT_LEND()
     tpdata = nullptr;
 }
 
-void
-G4HadronPhysicsFTFP_BERT_LEND::ConstructParticle()
+void G4HadronPhysicsFTFP_BERT_LEND::ConstructParticle()
 {
     G4MesonConstructor pMesonConstructor;
     G4MesonConstructor::ConstructParticle();
@@ -129,11 +128,12 @@ G4HadronPhysicsFTFP_BERT_LEND::ConstructParticle()
 
 #include "G4ProcessManager.hh"
 
-void
-G4HadronPhysicsFTFP_BERT_LEND::ConstructProcess()
+void G4HadronPhysicsFTFP_BERT_LEND::ConstructProcess()
 {
     if (tpdata == nullptr)
+    {
         tpdata = new ThreadPrivate;
+    }
 
     CreateModels();
     tpdata->theNeutrons->Build();
@@ -172,8 +172,7 @@ G4HadronPhysicsFTFP_BERT_LEND::ConstructProcess()
         pmanager->AddDiscreteProcess(capture);
     }
 
-    tpdata->xsNeutronCaptureXS = (G4NeutronCaptureXS *) G4CrossSectionDataSetRegistry::Instance()->GetCrossSectionDataSet(
-        G4NeutronCaptureXS::Default_Name());
+    tpdata->xsNeutronCaptureXS = (G4NeutronCaptureXS *) G4CrossSectionDataSetRegistry::Instance()->GetCrossSectionDataSet(G4NeutronCaptureXS::Default_Name());
     capture->AddDataSet(tpdata->xsNeutronCaptureXS);
     capture->AddDataSet(new G4ParticleHPCaptureData);
     auto *theNeutronRadCapture = new G4NeutronRadCapture();

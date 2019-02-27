@@ -19,8 +19,7 @@ public:
     ~Run();
 
 public:
-    void
-    EndOfRun();
+    void EndOfRun();
 
 private:
 private:

@@ -59,13 +59,14 @@ public:
 
     ~G4EmStandardPhysics_option1_dr() override;
 
-    void
-    ConstructParticle() override;
+    void ConstructParticle() override;
 
-    void
-    ConstructProcess() override;
+    void ConstructProcess() override;
 
 private:
+
+    Settings *settings = Settings::getInstance();
+
     G4int verbose;
     G4EmParticleList partList;
 };

@@ -15,13 +15,11 @@ public:
     ~GammaPhysics() override;
 
 public:
-    void
-    ConstructParticle() override
+    void ConstructParticle() override
     {
     }
 
-    void
-    ConstructProcess() override;
+    void ConstructProcess() override;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

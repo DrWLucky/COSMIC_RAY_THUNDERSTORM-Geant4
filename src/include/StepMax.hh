@@ -41,28 +41,20 @@ public:
 
     ~StepMax() override;
 
-    G4bool
-    IsApplicable(const G4ParticleDefinition &) override;
+    G4bool IsApplicable(const G4ParticleDefinition &) override;
 
-    void
-    SetMaxStep(G4double);
+    void SetMaxStep(G4double);
 
-    G4double
-    GetMaxStep()
+    G4double GetMaxStep()
     {
         return fMaxChargedStep;
     }
 
-    G4double
-    PostStepGetPhysicalInteractionLength(const G4Track &track,
-                                         G4double previousStepSize,
-                                         G4ForceCondition *condition) override;
+    G4double PostStepGetPhysicalInteractionLength(const G4Track &track, G4double previousStepSize, G4ForceCondition *condition) override;
 
-    G4VParticleChange *
-    PostStepDoIt(const G4Track &, const G4Step &) override;
+    G4VParticleChange *PostStepDoIt(const G4Track &, const G4Step &) override;
 
-    G4double
-    GetMeanFreePath(const G4Track &, G4double, G4ForceCondition *) override
+    G4double GetMeanFreePath(const G4Track &, G4double, G4ForceCondition *) override
     {
         return DBL_MAX;
     }

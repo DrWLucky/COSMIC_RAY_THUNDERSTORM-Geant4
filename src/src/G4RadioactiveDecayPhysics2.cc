@@ -30,16 +30,14 @@ G4RadioactiveDecayPhysics2::~G4RadioactiveDecayPhysics2()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-G4RadioactiveDecayPhysics2::ConstructParticle()
+void G4RadioactiveDecayPhysics2::ConstructParticle()
 {
     G4GenericIon::GenericIon();
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-G4RadioactiveDecayPhysics2::ConstructProcess()
+void G4RadioactiveDecayPhysics2::ConstructProcess()
 {
     G4RadioactiveDecay *radioactiveDecay = new G4RadioactiveDecay();
     radioactiveDecay->SetICM(true); // Internal Conversion

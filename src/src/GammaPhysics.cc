@@ -25,8 +25,7 @@ GammaPhysics::~GammaPhysics()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-GammaPhysics::ConstructProcess()
+void GammaPhysics::ConstructProcess()
 {
     G4ProcessManager *pManager = G4Gamma::Gamma()->GetProcessManager();
     //

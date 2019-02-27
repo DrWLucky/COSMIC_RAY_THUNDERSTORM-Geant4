@@ -56,15 +56,14 @@ public:
 
     ~G4EmStandardPhysics_option3_dr() override;
 
-    void
-    ConstructParticle() override;
+    void ConstructParticle() override;
 
-    void
-    ConstructProcess() override;
+    void ConstructProcess() override;
 
 private:
+    Settings *settings = Settings::getInstance();
     G4int verbose;
-    const G4double DR_OVER_R = Settings::drOverR;
+    const G4double DR_OVER_R = settings->drOverR;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

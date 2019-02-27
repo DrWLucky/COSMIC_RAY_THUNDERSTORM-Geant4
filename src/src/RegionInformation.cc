@@ -35,7 +35,6 @@ RegionInformation::RegionInformation() : G4VUserRegionInformation()
 RegionInformation::~RegionInformation() = default;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void
-RegionInformation::Print() const
+void RegionInformation::Print() const
 {
 }

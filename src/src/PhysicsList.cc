@@ -106,8 +106,7 @@ PhysicsList::~PhysicsList() = default;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-PhysicsList::ConstructParticle()
+void PhysicsList::ConstructParticle()
 {
     G4BosonConstructor pBosonConstructor;
     G4BosonConstructor::ConstructParticle();
@@ -130,8 +129,7 @@ PhysicsList::ConstructParticle()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-PhysicsList::SetCuts()
+void PhysicsList::SetCuts()
 {
     //// Production thresholds for world (default) ; !!!! : That is actually for the zone inside the plane with STP air
     G4double cutvalp = 0.0;
@@ -201,8 +199,7 @@ PhysicsList::SetCuts()
 #include "G4ProcessManager.hh"
 #include "G4StepLimiter.hh"
 
-void
-PhysicsList::Add_Step_Maxs()
+void PhysicsList::Add_Step_Maxs()
 {
     // Step limitation seen as a process
     G4StepLimiter *stepLimiter = new G4StepLimiter();
@@ -222,8 +219,7 @@ PhysicsList::Add_Step_Maxs()
 
 #include "StepMax.hh"
 
-void
-PhysicsList::Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma)
+void PhysicsList::Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma)
 {
     // Step limitation seen as a process
     StepMax *stepMaxProcess_elec = new StepMax();

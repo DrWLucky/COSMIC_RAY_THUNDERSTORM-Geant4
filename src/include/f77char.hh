@@ -40,14 +40,11 @@ public:
 
     ~CHARACTER();
 
-    CHARACTER
-    operator()(size_t index);
+    CHARACTER operator()(size_t index);
 
-    void
-    pad(size_t first, size_t howmany = 1);
+    void pad(size_t first, size_t howmany = 1);
 
-    void
-    operator=(char *str);
+    void operator=(char *str);
 
     operator char *();
 
@@ -72,7 +69,9 @@ inline CHARACTER::CHARACTER(char *cstring, const size_t lstr) : rep(cstring), le
 inline CHARACTER::~CHARACTER()
 {
     if (rep[len] == '\0')
-        return; // catches string constants
+    {
+        return;
+    } // catches string constants
 
     for (int i = len - 1; i >= 0; i--)
     {
@@ -87,8 +86,7 @@ inline CHARACTER::~CHARACTER()
     }
 }
 
-inline CHARACTER
-CHARACTER::operator()(size_t index)
+inline CHARACTER CHARACTER::operator()(size_t index)
 {
     // Construct a temporary CHARACTER object for the array element
     // identified by "index" in order to zero-terminate that element
@@ -97,8 +95,7 @@ CHARACTER::operator()(size_t index)
     return element;                    // destructor called here.
 }
 
-inline void
-CHARACTER::pad(size_t first, size_t howmany)
+inline void CHARACTER::pad(size_t first, size_t howmany)
 {
 
     size_t pos = 0, i = 0, stop = first + howmany - 1;
@@ -112,8 +109,7 @@ CHARACTER::pad(size_t first, size_t howmany)
     }
 }
 
-inline void
-CHARACTER::operator=(char *str)
+inline void CHARACTER::operator=(char *str)
 {
     strncpy(rep, str, len);                    // this will copy a zero if str < rep
     rep[len - 1] = '\0';                      // zero terminate in case strncpy did not

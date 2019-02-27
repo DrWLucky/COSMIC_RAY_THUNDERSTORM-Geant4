@@ -26,16 +26,25 @@
 
 // energies,cosangles,altitudes,types
 extern "C" {
-void
-gen_parma_cr_(const int *, double[], // MeV
-              double[], // cosine of zenith angle (e.g. ang=1.0 for vertical direction, ang=0.0 for holizontal direction)
-              double[], // km
-              int[], const int *,     // Particle ID (Particle ID, 31:e-, 32:e+, 33:photon)
-              const int *,     // size of energy mesh (will be log)
-              const int *,     // size of angle mesh (linear)
-              const int *,     // size of altitude mesh (linear)
-              const double *,  // minimum altitude (km)
-              const double *); // maximum altitude (km)
+void gen_parma_cr_(const int *, double[], // MeV
+                   double[], // cosine of zenith angle (e.g. ang=1.0 for vertical direction, ang=0.0 for holizontal direction)
+                   double[], // km
+                   int[], const int *,     // Particle ID (Particle ID, 31:e-, 32:e+, 33:photon)
+                   const int *,     // size of energy mesh (will be log)
+                   const int *,     // size of angle mesh (linear)
+                   const int *,     // size of altitude mesh (linear)
+                   const double *,  // minimum altitude (km)
+                   const double *, // maximum altitude (km)
+                   const double *, // emin MeV
+                   const double *, // emax MeV
+                   const int *,// iyear
+                   const int *,// imonth
+                   const int *,// iday
+                   const double *,// glat deg -90 =< glat =< 90
+                   const double *);// glong deg -180 =< glat =< 180
+
+
+
 // See custom_subroutines.f90 for more info
 }
 
@@ -53,7 +62,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction
 
     setlocale(LC_ALL, "C"); // just in case
 
-    if (Settings::WRITE_MOM_OUTPUT_FOR_TEST)
+    if (settings->WRITE_MOM_OUTPUT_FOR_TEST)
     {
         std::ofstream asciiFile7;
         asciiFile7.open(name_outFile_mom, std::ios::trunc);
@@ -70,8 +79,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 {
     G4double energy;
     G4ThreeVector position_ini(0., 0., 0.);
@@ -81,77 +89,48 @@ PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
     G4double time = 0.;
 
-    parameter_set sampled_set{};
+    cosmic_parameter_set sampled_set{};
     sampled_set.type = -10; // dummy initialization to remove warning from compiler
     /////////////////////////////////////////////////////////////////////
 
-    if (Settings::initial_state
-        == Settings::parma) // from expacs tabulated values of photon, electron, positron spectra
+    //            sampled_set = read_particles[index_sampling_part];
+    sampled_set = sample_parameter_set_from_PARMA_distrutions_cumu();
+
+    position_ini = sample_CR_secondary_position(sampled_set.altitude);
+    // from PARMA OUTPUT:
+    //   cos(theta)=1,  indicates  the  vertical  downward  direction,
+    //   while  90  degree,  i.e.  cos(theta)=0, indicates the horizontal direction.
+    momentum_ini = CR_direction_rand_sample(-1.0 * sampled_set.cos_zenith_angle);
+    // multiplication by -1 is important, to make sure that when sampled_set.cos_zenith_angle is 1, the particle is sampled vertical downward
+
+    //            G4cout << momentum_ini[1] << G4endl;
+
+    if (settings->WRITE_MOM_OUTPUT_FOR_TEST)
     {
-        //            sampled_set = read_particles[index_sampling_part];
-        sampled_set = sample_parameter_set_from_PARMA_distrutions_cumu();
-
-        position_ini = sample_CR_secondary_position(sampled_set.altitude);
-        // from PARMA OUTPUT:
-        //   cos(theta)=1,  indicates  the  vertical  downward  direction,
-        //   while  90  degree,  i.e.  cos(theta)=0, indicates the horizontal direction.
-        momentum_ini = CR_direction_rand_sample(-1.0 * sampled_set.cos_zenith_angle);
-        // multiplication by -1 is important, to make sure that when sampled_set.cos_zenith_angle is 1, the particle is sampled vertical downward
-
-        //            G4cout << momentum_ini[1] << G4endl;
-
-        if (Settings::WRITE_MOM_OUTPUT_FOR_TEST)
-            generator_output_for_test_momentum(momentum_ini);
-
-        //            G4cout << " Sampled type : " << TYPEE << G4endl;
-
-        if (sampled_set.type == 0) // RREA gamma rays from a given distance (approximative spectrum)
-        {
-            energy = sampled_set.energy * MeV;
-            particle = Gamma;
-        }
-        else if (sampled_set.type == -1)
-        {
-            energy = sampled_set.energy * MeV;
-            particle = Electron;
-        }
-        else if (sampled_set.type == 1)
-        {
-            energy = sampled_set.energy * MeV;
-            particle = Positron;
-        }
-        else if (sampled_set.type == 20)
-        {
-            energy = sampled_set.energy * MeV;
-            particle = Neutron;
-        }
-        else if (sampled_set.type == 21)
-        {
-            energy = sampled_set.energy * MeV;
-            particle = Proton;
-        }
-        else
-        {
-            G4cout << "ERROR : sampled type is not 0, -1, 1, 20 or 21. Aborting." << G4endl;
-            std::abort();
-        }
+        generator_output_for_test_momentum(momentum_ini);
     }
-    else if (Settings::initial_state == Settings::CR_proton) // shooting CR proton
+
+    if (sampled_set.type == 1)
     {
-        energy = 30. * GeV;
-        position_ini = G4ThreeVector(0, Settings::ALTITUDE_CR_PROTON_SAMPLE, 0);
-        momentum_ini = G4ThreeVector(0., -1., 0.);
-        particle = Proton;
+        energy = sampled_set.energy * MeV;
+        particle = MuonP;
+    }
+    else if (sampled_set.type == 2)
+    {
+        energy = sampled_set.energy * MeV;
+        particle = MuonN;
     }
     else
     {
-        G4cout << "Settings::initial_state is not defined. Aborting" << '\n';
+        G4cout << "ERROR : sampled type is not 0, -1, 1, 20 or 21. Aborting." << G4endl;
         std::abort();
     }
+
+
     //    G4cout << energy / keV << G4endl;
 
     // pos_dir is pair with 3 vector positon and 3 vector momentum direction
-    //    position_ini = G4ThreeVector(0, Settings::ALTITUDE_PARAMETER, 0);
+    //    position_ini = G4ThreeVector(0, settings->ALTITUDE_PARAMETER, 0);
     //    momentum_ini = isotropic_direction_rand_sample();
     //    momentum_ini = sample_isotropic_beam_direction(position_ini, OpeningAngle);
 
@@ -165,21 +144,15 @@ PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreeVector
-PrimaryGeneratorAction::sample_CR_secondary_position(double altitude)
+G4ThreeVector PrimaryGeneratorAction::sample_CR_secondary_position(const double &altitude)
 {
-    G4ThreeVector position = {(G4UniformRand() - 0.5) * Settings::CR_SAMPLING_XY_HALF_SIZE * 2.0 * CLHEP::km,
-                              altitude * CLHEP::km,
-                              (G4UniformRand() - 0.5) * Settings::CR_SAMPLING_XY_HALF_SIZE * 2.0 * CLHEP::km};
+    G4ThreeVector position = {(G4UniformRand() - 0.5) * settings->CR_SAMPLING_XY_HALF_SIZE * 2.0 * CLHEP::km, altitude * CLHEP::km, (G4UniformRand() - 0.5) * settings->CR_SAMPLING_XY_HALF_SIZE * 2.0 * CLHEP::km};
     return position;
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-PrimaryGeneratorAction::Sample_one_RREA_gammaray_energy(const G4double &MinEner,
-                                                        const G4double &MaxEner,
-                                                        const G4double &E_cut)
+G4double PrimaryGeneratorAction::Sample_one_RREA_gammaray_energy(const G4double &MinEner, const G4double &MaxEner, const G4double &E_cut)
 {
     // random samples the energy of one RREA gamma ray
     // RREA gamma spectrum is approximately = 1/E * exp (-E / 7.3MeV)
@@ -205,8 +178,7 @@ PrimaryGeneratorAction::Sample_one_RREA_gammaray_energy(const G4double &MinEner,
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-PrimaryGeneratorAction::Sample_one_PL_energy(const G4double &MinEner, const G4double &MaxEner, const G4double &index)
+G4double PrimaryGeneratorAction::Sample_one_PL_energy(const G4double &MinEner, const G4double &MaxEner, const G4double &index)
 {
     // random samples the energy of one RREA gamma ray
     // RREA gamma spectrum is approximately = 1/E * exp (-E / 7.3MeV)
@@ -232,11 +204,10 @@ PrimaryGeneratorAction::Sample_one_PL_energy(const G4double &MinEner, const G4do
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreeVector
-PrimaryGeneratorAction::sample_gaussian_beam_direction(G4ThreeVector position, G4double Opening_Ang)
+G4ThreeVector PrimaryGeneratorAction::sample_gaussian_beam_direction(const G4ThreeVector &position, const G4double &OpeningAngle)
 {
     G4double R_max = 10000.; // -> maximum angle is atan(10000) = 89.9943 degrees
-    G4double sigma_sample_R = std::tan(Opening_Ang);
+    G4double sigma_sample_R = std::tan(OpeningAngle);
     G4double R_try = R_max + 10.;    // just for initialization
     G4double X_try = 0., Z_try = 0.; // just for initialization
 
@@ -248,8 +219,7 @@ PrimaryGeneratorAction::sample_gaussian_beam_direction(G4ThreeVector position, G
         R_try = sqrt(X_try * X_try + Z_try * Z_try);
     }
 
-    G4ThreeVector position_virtual_particle =
-        position + G4ThreeVector(0., 1., 0.) + G4ThreeVector(1., 0., 0.) * X_try + G4ThreeVector(0., 0., 1.) * Z_try;
+    G4ThreeVector position_virtual_particle = position + G4ThreeVector(0., 1., 0.) + G4ThreeVector(1., 0., 0.) * X_try + G4ThreeVector(0., 0., 1.) * Z_try;
 
     G4ThreeVector momentumDirection = (position_virtual_particle - position);
     momentumDirection = momentumDirection / momentumDirection.mag();
@@ -259,8 +229,7 @@ PrimaryGeneratorAction::sample_gaussian_beam_direction(G4ThreeVector position, G
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // isotropic whitin given angle
-G4ThreeVector
-PrimaryGeneratorAction::sample_isotropic_beam_direction(G4ThreeVector position, G4double Opening_Ang)
+G4ThreeVector PrimaryGeneratorAction::sample_isotropic_beam_direction(const G4ThreeVector &position, const G4double &Opening_Ang)
 {
     G4double sigma_sample_R = std::tan(Opening_Ang);
     G4double R_try = sigma_sample_R * 5.; // just for initialization
@@ -274,8 +243,7 @@ PrimaryGeneratorAction::sample_isotropic_beam_direction(G4ThreeVector position, 
         R_try = sqrt(X_try * X_try + Z_try * Z_try);
     }
 
-    G4ThreeVector position_virtual_particle =
-        position + G4ThreeVector(0., 1., 0.) + G4ThreeVector(1., 0., 0.) * X_try + G4ThreeVector(0., 0., 1.) * Z_try;
+    G4ThreeVector position_virtual_particle = position + G4ThreeVector(0., 1., 0.) + G4ThreeVector(1., 0., 0.) * X_try + G4ThreeVector(0., 0., 1.) * Z_try;
 
     G4ThreeVector momentumDirection = (position_virtual_particle - position);
     momentumDirection = momentumDirection / momentumDirection.mag();
@@ -285,8 +253,7 @@ PrimaryGeneratorAction::sample_isotropic_beam_direction(G4ThreeVector position, 
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // isotropic over 4 pi steradians
-G4ThreeVector
-PrimaryGeneratorAction::isotropic_direction_rand_sample()
+G4ThreeVector PrimaryGeneratorAction::isotropic_direction_rand_sample()
 {
     G4ThreeVector momentum_ini;
 
@@ -302,8 +269,7 @@ PrimaryGeneratorAction::isotropic_direction_rand_sample()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Following angular distributions compuer from PARMA code
-G4ThreeVector
-PrimaryGeneratorAction::CR_direction_rand_sample(double cos_Sampled)
+G4ThreeVector PrimaryGeneratorAction::CR_direction_rand_sample(const double &cos_Sampled)
 {
     G4ThreeVector momentum_ini;
 
@@ -322,11 +288,10 @@ PrimaryGeneratorAction::CR_direction_rand_sample(double cos_Sampled)
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // uses cumulative distribution sampling
 
-parameter_set
-PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
+cosmic_parameter_set PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
 {
     G4double eRand, cos_angRand, alt_Rand;
-    int idx_rand = 0;
+    int idx_particle_sampled = 0;
 
     //    int idx_angRand = 0;
     //    int idx_alt_Rand = 0;
@@ -337,23 +302,15 @@ PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
         seed_cr_smpl = (int) std::round(G4UniformRand() * 10000.0);
         int seed_ = seed_cr_smpl;
         int nb = nb_int;
-        gen_parma_cr_(&seed_,
-                      output_energies,
-                      output_cosangles,
-                      output_altitudes,
-                      output_types,
-                      &nb,
-                      &nebin,
-                      &nabin,
-                      &naltbin,
-                      &min_alt,
-                      &max_alt);
+        gen_parma_cr_(&seed_, output_energies, output_cosangles, output_altitudes, output_types, &nb, &nebin, &nabin, &naltbin, &min_alt, &max_alt, &min_cr_ener, &max_cr_ener, &iyear, &imonth, &iday, &glat, &glong);
         seed_cr_smpl++;
 
         counter = 0;
 
-        if (Settings::CR_GENRATOR_write_output_FOR_TEST)
+        if (settings->CR_GENRATOR_write_output_FOR_TEST)
+        {
             generator_output_for_test();
+        }
 
         G4cout << "Generated " << nb_int << " random cosmic ray particles." << G4endl;
     }
@@ -361,7 +318,7 @@ PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
     eRand = output_energies[counter];
     cos_angRand = output_cosangles[counter];
     alt_Rand = output_altitudes[counter];
-    idx_rand = output_types[counter];
+    idx_particle_sampled = output_types[counter];
     counter++;
 
     if (alt_Rand < min_alt || alt_Rand > max_alt)
@@ -377,7 +334,7 @@ PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
     }
 
     // photon electron positron neutron proton
-    if (idx_rand < 1 || idx_rand > 5)
+    if (idx_particle_sampled < 1 || idx_particle_sampled > 5)
     {
         G4cout << "Sampled index is not 1, 2, 3, 4 or 5 . Aborting." << G4endl;
         std::abort();
@@ -389,34 +346,22 @@ PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
         std::abort();
     }
 
-    parameter_set spld_set{};
+    cosmic_parameter_set spld_set{};
     spld_set.energy = eRand;
     spld_set.cos_zenith_angle = cos_angRand;
     spld_set.altitude = alt_Rand;
 
-    if (idx_rand == 1)
+    if (idx_particle_sampled == 1)
     {
-        spld_set.type = 0; // photon
+        spld_set.type = 1; // muon +
     }
-    else if (idx_rand == 2)
+    else if (idx_particle_sampled == 2)
     {
-        spld_set.type = -1; // electron
-    }
-    else if (idx_rand == 3)
-    {
-        spld_set.type = 1; // positron
-    }
-    else if (idx_rand == 4)
-    {
-        spld_set.type = 20; // neutron
-    }
-    else if (idx_rand == 5)
-    {
-        spld_set.type = 21; // proton
+        spld_set.type = 2; // muon -
     }
     else
     {
-        G4cout << "ERROR in sample_parameter_set_from_PARMA_distrutions_cumu : idx_rand is not 1, 2 or 3. Aborting.";
+        G4cout << "ERROR in sample_parameter_set_from_PARMA_distrutions_cumu : idx_particle_sampled is not 1, 2 or 3. Aborting.";
         std::abort();
     }
 
@@ -425,23 +370,14 @@ PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions_cumu()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-PrimaryGeneratorAction::generator_output_for_test()
+void PrimaryGeneratorAction::generator_output_for_test()
 {
     std::ofstream asciiFile6;
     asciiFile6.open("./tests/cr_sampl_test_" + std::to_string(seed_cr_smpl) + ".txt", std::ios::trunc);
 
     for (int ii = 0; ii < nb_int; ++ii)
     {
-        asciiFile6
-            << output_types[ii]
-            << " "
-            << output_energies[ii]
-            << " "
-            << output_altitudes[ii]
-            << " "
-            << output_cosangles[ii]
-            << G4endl;
+        asciiFile6 << output_types[ii] << " " << output_energies[ii] << " " << output_altitudes[ii] << " " << output_cosangles[ii] << G4endl;
     }
 
     asciiFile6.close();
@@ -449,8 +385,7 @@ PrimaryGeneratorAction::generator_output_for_test()
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void
-PrimaryGeneratorAction::generator_output_for_test_momentum(const G4ThreeVector &mom)
+void PrimaryGeneratorAction::generator_output_for_test_momentum(const G4ThreeVector &mom)
 {
     std::ofstream asciiFile7;
     asciiFile7.open(name_outFile_mom, std::ios::app);
@@ -460,8 +395,7 @@ PrimaryGeneratorAction::generator_output_for_test_momentum(const G4ThreeVector &
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-std::vector<double>
-PrimaryGeneratorAction::logspace(double xmin, double xmax, int nbb)
+std::vector<double> PrimaryGeneratorAction::logspace(double &xmin, double &xmax, int nbb)
 {
     std::vector<double> XX = linspace(log10(xmin), log10(xmax), nbb);
 
@@ -475,11 +409,7 @@ PrimaryGeneratorAction::logspace(double xmin, double xmax, int nbb)
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-PrimaryGeneratorAction::interpolate(const std::vector<G4double> &xData,
-                                    const std::vector<G4double> &yData,
-                                    G4double x,
-                                    bool extrapolate)
+G4double PrimaryGeneratorAction::interpolate(const std::vector<G4double> &xData, const std::vector<G4double> &yData, G4double &x, bool extrapolate)
 {
     int size = static_cast<int>(xData.size());
 
@@ -495,16 +425,19 @@ PrimaryGeneratorAction::interpolate(const std::vector<G4double> &xData,
             i++;
     }
 
-    double xL = xData[i], yL = yData[i], xR = xData[i + 1], yR = yData[i
-        + 1]; // points on either side (unless beyond ends)
+    double xL = xData[i], yL = yData[i], xR = xData[i + 1], yR = yData[i + 1]; // points on either side (unless beyond ends)
 
     if (!extrapolate) // if beyond ends of array and not extrapolating
     {
         if (x < xL)
+        {
             yR = yL;
+        }
 
         if (x > xR)
+        {
             yL = yR;
+        }
     }
 
     double dydx = (yR - yL) / (xR - xL); // gradient
@@ -514,8 +447,7 @@ PrimaryGeneratorAction::interpolate(const std::vector<G4double> &xData,
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4double
-PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
+G4double PrimaryGeneratorAction::sum_vector(const std::vector<G4double> &vec)
 {
     G4double sum_of_elems = 0.;
 
@@ -536,8 +468,8 @@ PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
 
 //    int imonth = 3;
 //    int iday = 1;
-//    double glat = Settings::latitude;
-//    double glong = Settings::longitude;
+//    double glat = settings->latitude;
+//    double glong = settings->longitude;
 
 //    double outputFlux = 10.0;
 
@@ -546,9 +478,9 @@ PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
 //    return outputFlux;
 //}
 
-// parameter_set PrimaryGeneratorAction::sample_parameter_set_from_PARMA_tabulated_particle_list()
+// cosmic_parameter_set PrimaryGeneratorAction::sample_parameter_set_from_PARMA_tabulated_particle_list()
 //{
-//    parameter_set spld_set;
+//    cosmic_parameter_set spld_set;
 
 //    return spld_set;
 //}
@@ -560,7 +492,7 @@ PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
 
 //    std::ifstream file(filename);
 
-//    parameter_set set_tmp;
+//    cosmic_parameter_set set_tmp;
 
 //    if (file)
 //        {
@@ -622,7 +554,7 @@ PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
 
 //// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //// uses simple (unefficient) rejection sampling
-// parameter_set PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions()
+// cosmic_parameter_set PrimaryGeneratorAction::sample_parameter_set_from_PARMA_distrutions()
 //{
 
 //    G4double pOfeRand = 0.0;
@@ -654,7 +586,7 @@ PrimaryGeneratorAction::sum_vector(std::vector<G4double> vec)
 
 //    //    G4cout << "could sample one !" << G4endl;
 
-//    parameter_set spld_set;
+//    cosmic_parameter_set spld_set;
 
 //    spld_set.energy = eRand;
 //    spld_set.cos_zenith_angle = cos_angRand;
