@@ -16,6 +16,8 @@
 
 #include <sys/time.h>
 #include <time.h>
+#include <vector>
+#include <algorithm>
 
 class DetectorConstruction;
 
@@ -23,41 +25,48 @@ class EventAction;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class SteppingAction : public G4UserSteppingAction
+class SteppingAction: public G4UserSteppingAction
 {
 public:
-    SteppingAction(DetectorConstruction *, EventAction *);
 
-    ~SteppingAction() override;
+  SteppingAction(DetectorConstruction *, EventAction *);
 
-    void UserSteppingAction(const G4Step *aStep) override;
+  ~SteppingAction() override;
+
+  void UserSteppingAction(const G4Step *aStep) override;
 
 private:
 
-    Settings *settings = Settings::getInstance();
+  Settings *settings = Settings::getInstance();
 
-    AnalysisManager *analysis = AnalysisManager::getInstance();
-    DetectorConstruction *fDetector;
-    EventAction *fEventAction;
-    G4StepPoint *thePrePoint = nullptr;
+  AnalysisManager *analysis = AnalysisManager::getInstance();
+  DetectorConstruction *fDetector;
+  EventAction *fEventAction;
+  G4StepPoint *thePrePoint = nullptr;
 
-    const G4int PDG_phot = 22;
-    const G4int PDG_elec = 11;
-    const G4int PDG_posi = -11;
+  const G4int PDG_phot  = 22;
+  const G4int PDG_elec  = 11;
+  const G4int PDG_posi  = -11;
+  const G4int PDG_muonP = -13;
+  const G4int PDG_muonN = 13;
 
-    double get_wall_time();
+  double get_wall_time();
 
-    double computation_time_length_for_event_limit = 900.; // 15 minutes
+  double computation_time_length_for_event_limit = 900.; // 15 minutes
 
-    //    G4int part_ID;
-    //    G4int previous_part_ID;
+  //    G4int part_ID;
+  //    G4int previous_part_ID;
 
-    bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+  bool is_inside_eField_region(const G4double& alt,
+                               const G4double& xx,
+                               const G4double& zz);
 
-    G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
-    G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
+  G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
+  G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
 
-    uint nb_skip = 0;
+  uint nb_skip = 0;
+
+  std::vector < int > PDG_LST = settings->PDG_LIST;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

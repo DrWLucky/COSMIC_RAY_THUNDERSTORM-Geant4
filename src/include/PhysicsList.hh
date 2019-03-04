@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -33,25 +34,31 @@
 #include "Settings.hh"
 #include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsList : public G4VModularPhysicsList
+class PhysicsList: public G4VModularPhysicsList
 {
 public:
-    explicit PhysicsList(const bool em_only);
 
-    ~PhysicsList() override;
+  explicit PhysicsList(const bool em_only);
+
+  ~PhysicsList() override;
 
 public:
-    void ConstructParticle() override;
 
-    void SetCuts() override;
+  void ConstructParticle() override;
 
-    //        void AddStepMax();
-    void Add_Step_Maxs();
+  void SetCuts() override;
+
+  //        void AddStepMax();
+  void Add_Step_Maxs();
 
 private:
-    void Add_global_StepMax(G4double stepMaxVal_elec, G4double stepMaxVal_gamma);
+
+  Settings *settings   = Settings::getInstance();
+  double    stepMaxVal = settings->GLOBAL_MAX_STEP;
+
+  void Add_global_StepMax();
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -33,26 +34,33 @@
 #include "Settings.hh"
 #include "globals.hh"
 
-class G4UniformElectricField_timeCut : public G4ElectricField
+class G4UniformElectricField_timeCut: public G4ElectricField
 {
-public: // with description
-    explicit G4UniformElectricField_timeCut(const G4ThreeVector FieldVector);
-    // A field with value equal to FieldVector.
+public:
 
-    G4UniformElectricField_timeCut(G4double vField, G4double vTheta, G4double vPhi);
+  // with description
+  explicit G4UniformElectricField_timeCut(const G4ThreeVector FieldVector);
 
-    ~G4UniformElectricField_timeCut() override;
+  // A field with value equal to FieldVector.
 
-    G4UniformElectricField_timeCut &operator=(const G4UniformElectricField_timeCut &p);
-    // Copy constructor and assignment operator
+  G4UniformElectricField_timeCut(G4double vField, G4double vTheta, G4double vPhi);
 
-    void GetFieldValue(const G4double pos[4], G4double *field) const override;
+  ~G4UniformElectricField_timeCut() override;
 
-    G4Field *Clone() const override;
+  G4UniformElectricField_timeCut& operator = (const G4UniformElectricField_timeCut &p);
+
+  // Copy constructor and assignment operator
+
+  void     GetFieldValue(const G4double pos[4],
+                         G4double      *field) const override;
+
+  G4Field* Clone() const override;
 
 private:
 
-    Settings *settings = Settings::getInstance();
+  Settings *settings = Settings::getInstance();
 
-    G4double fFieldComponents[6];
+  G4double fFieldComponents[6];
+
+  const double EFIELD_XY_HALF_SIZE_mm = settings->EFIELD_XY_HALF_SIZE * km;
 };

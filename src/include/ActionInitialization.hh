@@ -12,20 +12,21 @@ class DetectorConstruction;
 /// Action initialization class.
 ///
 
-class ActionInitialization : public G4VUserActionInitialization
+class ActionInitialization: public G4VUserActionInitialization
 {
 public:
-    explicit ActionInitialization(DetectorConstruction *detector);
 
-    ~ActionInitialization() override;
+  explicit ActionInitialization(DetectorConstruction *detector);
 
-    void BuildForMaster() const override;
+  ~ActionInitialization() override;
 
-    void Build() const override;
+  void BuildForMaster() const override;
+
+  void Build() const override;
 
 private:
 
-    Settings *settings = Settings::getInstance();
+  Settings *settings = Settings::getInstance();
 
-    DetectorConstruction *fDetector;
+  DetectorConstruction *fDetector;
 };

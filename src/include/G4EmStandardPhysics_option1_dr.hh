@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -25,7 +26,7 @@
 //
 // $Id: G4EmStandardPhysics_option1.hh 105735 2017-08-16 12:59:43Z gcosmo $
 //
-//---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // ClassName:   G4EmStandardPhysics_option1
 //
@@ -36,7 +37,7 @@
 // 13.11.2006 V.Ivanchenko set default msc step limit false
 // 15.05.2007 V.Ivanchenko rename to _option1
 //
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 //
 // This class provides construction of EM standard physics using set of options
 // allowing speed up simulation. Results for simulation in thin layers of
@@ -50,25 +51,27 @@
 #include "Settings.hh"
 #include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class G4EmStandardPhysics_option1_dr : public G4VPhysicsConstructor
+class G4EmStandardPhysics_option1_dr: public G4VPhysicsConstructor
 {
 public:
-    explicit G4EmStandardPhysics_option1_dr(G4int ver = 1, const G4String &name = "");
 
-    ~G4EmStandardPhysics_option1_dr() override;
+  explicit G4EmStandardPhysics_option1_dr(G4int           ver = 1,
+                                          const G4String& name = "");
 
-    void ConstructParticle() override;
+  ~G4EmStandardPhysics_option1_dr() override;
 
-    void ConstructProcess() override;
+  void ConstructParticle() override;
+
+  void ConstructProcess() override;
 
 private:
 
-    Settings *settings = Settings::getInstance();
+  Settings *settings = Settings::getInstance();
 
-    G4int verbose;
-    G4EmParticleList partList;
+  G4int verbose;
+  G4EmParticleList partList;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

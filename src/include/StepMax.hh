@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -22,7 +23,7 @@
 // * use  in  resulting  scientific  publications,  and indicate your *
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #ifndef StepMax_h
 #define StepMax_h 1
@@ -32,37 +33,42 @@
 #include "G4VDiscreteProcess.hh"
 #include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class StepMax : public G4VDiscreteProcess
+class StepMax: public G4VDiscreteProcess
 {
 public:
-    explicit StepMax(const G4String &processName = "UserMaxStep");
 
-    ~StepMax() override;
+  explicit StepMax(const G4String& processName = "UserMaxStep");
 
-    G4bool IsApplicable(const G4ParticleDefinition &) override;
+  ~StepMax() override;
 
-    void SetMaxStep(G4double);
+  G4bool   IsApplicable(const G4ParticleDefinition&) override;
 
-    G4double GetMaxStep()
-    {
-        return fMaxChargedStep;
-    }
+  void     SetMaxStep(G4double);
 
-    G4double PostStepGetPhysicalInteractionLength(const G4Track &track, G4double previousStepSize, G4ForceCondition *condition) override;
+  G4double GetMaxStep()
+  {
+    return fMaxChargedStep;
+  }
 
-    G4VParticleChange *PostStepDoIt(const G4Track &, const G4Step &) override;
+  G4double PostStepGetPhysicalInteractionLength(const G4Track   & track,
+                                                G4double          previousStepSize,
+                                                G4ForceCondition *condition) override;
 
-    G4double GetMeanFreePath(const G4Track &, G4double, G4ForceCondition *) override
-    {
-        return DBL_MAX;
-    }
+  G4VParticleChange* PostStepDoIt(const G4Track&,
+                                  const G4Step&) override;
+
+  G4double           GetMeanFreePath(const G4Track&, G4double, G4ForceCondition *) override
+  {
+    return DBL_MAX;
+  }
 
 private:
-    G4double fMaxChargedStep;
+
+  G4double fMaxChargedStep;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+#endif /* ifndef StepMax_h */

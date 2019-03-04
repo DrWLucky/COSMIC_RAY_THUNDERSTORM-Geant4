@@ -21,7 +21,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine gen_parma_cr(seed, energies, cosangles, altitudes, types, nb, nebin, nabin, naltbin, altmin, altmax, emin, emax, &
-        iyear, imonth, iday, glat, glong)
+        iyear, imonth, iday, glat, glong,type_list,ntypes)
     use :: iso_c_binding
     !  Generate cosmic-ray based on PARMA model
     USE parma, ONLY : getr, getd, getspecangfinal, getspec, gethp
@@ -43,7 +43,8 @@ subroutine gen_parma_cr(seed, energies, cosangles, altitudes, types, nb, nebin, 
     ! integer,parameter :: nebin=700 ! size of energy mesh (will be log)
     ! integer,parameter :: nabin=100 ! size of angle mesh (linear)
     ! integer,parameter :: naltbin=300 ! size of altitude mesh (linear)
-    integer, parameter :: ntypes = 2 ! number of different type of particles to include
+    integer, intent(in) :: ntypes ! number of different type of particles to include
+    integer, intent(in), dimension(ntypes) :: type_list ! list of particles to includes
 
     real(8) :: ehigh(0:nebin), emid(nebin) ! higher and middle point of energy bin
     real(8) :: ahigh(0:nabin), amid(nabin) ! higher and middle point of angular bin
@@ -61,7 +62,7 @@ subroutine gen_parma_cr(seed, energies, cosangles, altitudes, types, nb, nebin, 
     real(8) :: PPII = acos(-1.0)
     real(8) :: spec_val = 0.0, spec_angle = 0.0
     ! Particle ID (Particle ID, 0:neutron, 1-28:H-Ni, 29-30:muon+-, 31:e-, 32:e+, 33:photon)
-    real(8) :: type_list(1:ntypes) = (/29, 30/) ! only positive and negative muons
+
     integer, intent(in) :: nb
     integer, intent(in) :: seed
     real(8), intent(in) :: altmax, altmin

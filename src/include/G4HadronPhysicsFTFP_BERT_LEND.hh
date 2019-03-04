@@ -37,58 +37,61 @@
 
 class G4ComponentGGHadronNucleusXsc;
 
-class G4HadronPhysicsFTFP_BERT_LEND : public G4VPhysicsConstructor
+class G4HadronPhysicsFTFP_BERT_LEND: public G4VPhysicsConstructor
 {
 public:
-    G4HadronPhysicsFTFP_BERT_LEND(G4int verbose = 1);
 
-    G4HadronPhysicsFTFP_BERT_LEND(const G4String &name, G4bool quasiElastic = false);
+  G4HadronPhysicsFTFP_BERT_LEND(G4int verbose = 1);
 
-    virtual ~G4HadronPhysicsFTFP_BERT_LEND();
+  G4HadronPhysicsFTFP_BERT_LEND(const G4String &name, G4bool quasiElastic = false);
+
+  virtual ~G4HadronPhysicsFTFP_BERT_LEND();
 
 public:
-    virtual void ConstructParticle();
 
-    virtual void ConstructProcess();
+  virtual void ConstructParticle();
+
+  virtual void ConstructProcess();
 
 private:
-    void CreateModels();
 
-    G4HadronicProcess *FindInelasticProcess(const G4ParticleDefinition *);
+  void               CreateModels();
 
-    struct ThreadPrivate
-    {
-        G4NeutronBuilder *theNeutrons;
-        G4BertiniNeutronBuilder *theBertiniNeutron;
-        G4FTFPNeutronBuilder *theFTFPNeutron;
-        G4NeutronLENDBuilder *theHPNeutron;
+  G4HadronicProcess* FindInelasticProcess(const G4ParticleDefinition *);
 
-        G4PiKBuilder *thePiK;
-        G4BertiniPiKBuilder *theBertiniPiK;
-        G4FTFPPiKBuilder *theFTFPPiK;
+  struct ThreadPrivate
+  {
+    G4NeutronBuilder        *theNeutrons;
+    G4BertiniNeutronBuilder *theBertiniNeutron;
+    G4FTFPNeutronBuilder    *theFTFPNeutron;
+    G4NeutronLENDBuilder    *theHPNeutron;
 
-        G4ProtonBuilder *thePro;
-        G4BertiniProtonBuilder *theBertiniPro;
-        G4FTFPProtonBuilder *theFTFPPro;
+    G4PiKBuilder        *thePiK;
+    G4BertiniPiKBuilder *theBertiniPiK;
+    G4FTFPPiKBuilder    *theFTFPPiK;
 
-        G4HyperonFTFPBuilder *theHyperon;
+    G4ProtonBuilder        *thePro;
+    G4BertiniProtonBuilder *theBertiniPro;
+    G4FTFPProtonBuilder    *theFTFPPro;
 
-        G4AntiBarionBuilder *theAntiBaryon;
-        G4FTFPAntiBarionBuilder *theFTFPAntiBaryon;
+    G4HyperonFTFPBuilder *theHyperon;
 
-        G4ComponentGGHadronNucleusXsc *xsKaon;
-        G4VCrossSectionDataSet *xsNeutronCaptureXS;
+    G4AntiBarionBuilder     *theAntiBaryon;
+    G4FTFPAntiBarionBuilder *theFTFPAntiBaryon;
 
-        G4LENDFissionCrossSection *theLENDFissionCrossSection;
+    G4ComponentGGHadronNucleusXsc *xsKaon;
+    G4VCrossSectionDataSet        *xsNeutronCaptureXS;
 
-        G4LENDCaptureCrossSection *theLENDCaptureCrossSection;
+    G4LENDFissionCrossSection *theLENDFissionCrossSection;
 
-        G4LENDInelastic *theLENDInelastic;
-        G4LENDInelasticCrossSection *theLENDInelasticCrossSection;
-    };
-    static G4ThreadLocal ThreadPrivate *tpdata;
+    G4LENDCaptureCrossSection *theLENDCaptureCrossSection;
 
-    // G4VCrossSectionDataSet * BGGProton;
-    // G4VCrossSectionDataSet * BGGNeutron;
-    G4bool QuasiElastic;
+    G4LENDInelastic             *theLENDInelastic;
+    G4LENDInelasticCrossSection *theLENDInelasticCrossSection;
+  };
+  static G4ThreadLocal ThreadPrivate *tpdata;
+
+  // G4VCrossSectionDataSet * BGGProton;
+  // G4VCrossSectionDataSet * BGGNeutron;
+  G4bool QuasiElastic;
 };

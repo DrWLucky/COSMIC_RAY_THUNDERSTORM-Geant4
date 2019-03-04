@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -40,102 +41,105 @@
 
 myExceptionHandler::myExceptionHandler(G4int verbosity_input)
 {
-    verbosity = verbosity_input;
+  verbosity = verbosity_input;
 }
 
 myExceptionHandler::~myExceptionHandler() = default;
 
-myExceptionHandler::myExceptionHandler(const myExceptionHandler &) : G4VExceptionHandler()
+myExceptionHandler::myExceptionHandler(const myExceptionHandler&) : G4VExceptionHandler()
+{}
+
+myExceptionHandler& myExceptionHandler::operator=(const myExceptionHandler&)
 {
+  return *this;
 }
 
-myExceptionHandler &myExceptionHandler::operator=(const myExceptionHandler &)
+G4int myExceptionHandler::operator==(const myExceptionHandler& right) const
 {
-    return *this;
+  return this == &right;
 }
 
-G4int myExceptionHandler::operator==(const myExceptionHandler &right) const
+G4int myExceptionHandler::operator!=(const myExceptionHandler& right) const
 {
-    return (this == &right);
-}
-
-G4int myExceptionHandler::operator!=(const myExceptionHandler &right) const
-{
-    return (this != &right);
+  return this != &right;
 }
 
 G4bool myExceptionHandler::Notify(const char *originOfException, const char *exceptionCode, G4ExceptionSeverity severity, const char *description)
 {
-    static const G4String es_banner = "\n-------- EEEE ------- G4Exception-START -------- EEEE -------\n";
-    static const G4String ee_banner = "\n-------- EEEE -------- G4Exception-END --------- EEEE -------\n";
-    static const G4String ws_banner = "\n-------- WWWW ------- G4Exception-START -------- WWWW -------\n";
-    static const G4String we_banner = "\n-------- WWWW -------- G4Exception-END --------- WWWW -------\n";
+  static const G4String es_banner = "\n-------- EEEE ------- G4Exception-START -------- EEEE -------\n";
+  static const G4String ee_banner = "\n-------- EEEE -------- G4Exception-END --------- EEEE -------\n";
+  static const G4String ws_banner = "\n-------- WWWW ------- G4Exception-START -------- WWWW -------\n";
+  static const G4String we_banner = "\n-------- WWWW -------- G4Exception-END --------- WWWW -------\n";
 
-    std::ostringstream message;
-    message << "*** G4Exception : " << exceptionCode << G4endl << "      issued by : " << originOfException << G4endl << description << G4endl;
+  std::ostringstream message;
+  message << "*** G4Exception : " << exceptionCode << G4endl << "      issued by : " << originOfException << G4endl << description << G4endl;
 
-    G4bool abortionForCoreDump = false;
-    G4ApplicationState aps = G4StateManager::GetStateManager()->GetCurrentState();
+  G4bool abortionForCoreDump = false;
+  G4ApplicationState aps     = G4StateManager::GetStateManager()->GetCurrentState();
 
-    switch (severity)
+  switch (severity)
+  {
+  case FatalException:
+
+    if (verbosity > 0)
     {
-        case FatalException:
-            if (verbosity > 0)
-            {
-                G4cerr << es_banner << message.str() << "*** Fatal Exception *** core dump ***" << ee_banner << G4endl;
-            }
-
-            abortionForCoreDump = true;
-
-            break;
-
-        case FatalErrorInArgument:
-            if (verbosity > 0)
-            {
-                G4cerr << es_banner << message.str() << "*** Fatal Error In Argument *** core dump ***" << ee_banner << G4endl;
-            }
-
-            abortionForCoreDump = true;
-            break;
-
-        case RunMustBeAborted:
-            if (aps == G4State_GeomClosed || aps == G4State_EventProc)
-            {
-                if (verbosity > 0)
-                {
-                    G4cerr << es_banner << message.str() << "*** Run Must Be Aborted ***" << ee_banner << G4endl;
-                }
-
-                G4RunManager::GetRunManager()->AbortRun(false);
-            }
-
-            abortionForCoreDump = false;
-            break;
-
-        case EventMustBeAborted:
-
-            if (aps == G4State_EventProc)
-            {
-                if (verbosity > 0)
-                {
-                    G4cerr << es_banner << message.str() << "*** Event Must Be Aborted ***" << ee_banner << G4endl;
-                }
-
-                G4RunManager::GetRunManager()->AbortEvent();
-            }
-
-            abortionForCoreDump = false;
-            break;
-
-        default:
-            if (verbosity > 0)
-            {
-                G4cout << ws_banner << message.str() << "*** This is just a warning message. ***" << we_banner << G4endl;
-            }
-
-            abortionForCoreDump = false;
-            break;
+      G4cerr << es_banner << message.str() << "*** Fatal Exception *** core dump ***" << ee_banner << G4endl;
     }
 
-    return abortionForCoreDump;
+    abortionForCoreDump = true;
+
+    break;
+
+  case FatalErrorInArgument:
+
+    if (verbosity > 0)
+    {
+      G4cerr << es_banner << message.str() << "*** Fatal Error In Argument *** core dump ***" << ee_banner << G4endl;
+    }
+
+    abortionForCoreDump = true;
+    break;
+
+  case RunMustBeAborted:
+
+    if ((aps == G4State_GeomClosed) || (aps == G4State_EventProc))
+    {
+      if (verbosity > 0)
+      {
+        G4cerr << es_banner << message.str() << "*** Run Must Be Aborted ***" << ee_banner << G4endl;
+      }
+
+      G4RunManager::GetRunManager()->AbortRun(false);
+    }
+
+    abortionForCoreDump = false;
+    break;
+
+  case EventMustBeAborted:
+
+    if (aps == G4State_EventProc)
+    {
+      if (verbosity > 0)
+      {
+        G4cerr << es_banner << message.str() << "*** Event Must Be Aborted ***" << ee_banner << G4endl;
+      }
+
+      G4RunManager::GetRunManager()->AbortEvent();
+    }
+
+    abortionForCoreDump = false;
+    break;
+
+  default:
+
+    if (verbosity > 0)
+    {
+      G4cout << ws_banner << message.str() << "*** This is just a warning message. ***" << we_banner << G4endl;
+    }
+
+    abortionForCoreDump = false;
+    break;
+  }
+
+  return abortionForCoreDump;
 }

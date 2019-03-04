@@ -7,19 +7,20 @@
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class GammaPhysics : public G4VPhysicsConstructor
+class GammaPhysics: public G4VPhysicsConstructor
 {
 public:
-    explicit GammaPhysics(const G4String &name = "gamma");
 
-    ~GammaPhysics() override;
+  explicit GammaPhysics(const G4String& name = "gamma");
+
+  ~GammaPhysics() override;
 
 public:
-    void ConstructParticle() override
-    {
-    }
 
-    void ConstructProcess() override;
+  void ConstructParticle() override
+  {}
+
+  void ConstructProcess() override;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -43,43 +44,52 @@ class G4Track;
 
 class BaseStackingActionMessenger;
 
-class BaseStackingAction : public G4UserStackingAction
+class BaseStackingAction: public G4UserStackingAction
 {
 public:
-    BaseStackingAction();
 
-    ~BaseStackingAction() override;
+  BaseStackingAction();
+
+  ~BaseStackingAction() override;
 
 public:
-    G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track *aTrack) override;
 
-    void NewStage() override;
+  G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track *aTrack) override;
 
-    void PrepareNewEvent() override;
+  void                       NewStage() override;
+
+  void                       PrepareNewEvent() override;
 
 private:
 
-    Settings *settings = Settings::getInstance();
+  Settings *settings = Settings::getInstance();
 
-    bool does_not_contain(const G4int ID, const std::vector<G4int> &LIST_IDS);
+  bool does_not_contain(const G4int                  ID,
+                        const std::vector < G4int >& LIST_IDS);
 
-    void print_status();
+  void print_status();
 
-    bool is_inside_eField_region(const G4double &alt, const G4double &xx, const G4double &zz);
+  bool is_inside_eField_region(const G4double& alt,
+                               const G4double& xx,
+                               const G4double& zz);
 
-    void check_PART_NB_LIMIT();
+  void check_PART_NB_LIMIT();
 
 protected:
-    G4StackManager *stackManager;
-    //        G4String part_name;
-    std::vector<G4int> LIST_ENERGETIC_PART_IDS;
-    //        std::vector<G4double> LIST_ENERGIES;
-    G4double VARIABLE_TIME_LIMIT;
-    G4double TIME_STEP = -77.88 * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche length (time)
-    const G4double ENER_THRES = 800.0 * keV;
-    const uint ENERGETIC_PART_NB_LIMIT = 10000;
-    uint EVENT_NB = 0;
 
-    G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
-    G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
+  G4StackManager *stackManager;
+
+  //        G4String part_name;
+  std::vector < G4int > LIST_ENERGETIC_PART_IDS;
+
+  //        std::vector<G4double> LIST_ENERGIES;
+  G4double VARIABLE_TIME_LIMIT;
+  G4double TIME_STEP                     = -77.88 * microsecond; // just for initialization, should correspond to a fraction of a RREA avalanche
+                                                                 // length (time)
+  const G4double ENER_THRES              = 800.0 * keV;
+  const uint     ENERGETIC_PART_NB_LIMIT = 10000;
+  uint EVENT_NB                          = 0;
+
+  G4double alt_min = settings->EFIELD_REGION_ALT_CENTER - settings->EFIELD_REGION_LEN / 2.0; // km
+  G4double alt_max = settings->EFIELD_REGION_ALT_CENTER + settings->EFIELD_REGION_LEN / 2.0; // km
 };

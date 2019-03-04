@@ -11,17 +11,19 @@ class PrimaryGeneratorAction;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class RunAction : public G4UserRunAction
+class RunAction: public G4UserRunAction
 {
 public:
-    RunAction();
 
-    ~RunAction() override;
+  RunAction();
+
+  ~RunAction() override;
 
 public:
-    void BeginOfRunAction(const G4Run *) override;
 
-    void EndOfRunAction(const G4Run *) override;
+  void BeginOfRunAction(const G4Run *) override;
+
+  void EndOfRunAction(const G4Run *) override;
 
 private:
 };

@@ -28,13 +28,11 @@
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 RegionInformation::RegionInformation() : G4VUserRegionInformation()
-{
-}
+{}
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 RegionInformation::~RegionInformation() = default;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void RegionInformation::Print() const
-{
-}
+{}

@@ -1,4 +1,5 @@
 //
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -30,77 +31,75 @@
 
 G4UniformElectricField_timeCut::G4UniformElectricField_timeCut(const G4ThreeVector FieldVector)
 {
-    fFieldComponents[0] = 0.0;
-    fFieldComponents[1] = 0.0;
-    fFieldComponents[2] = 0.0;
-    fFieldComponents[3] = FieldVector.x();
-    fFieldComponents[4] = FieldVector.y();
-    fFieldComponents[5] = FieldVector.z();
+  fFieldComponents[0] = 0.0;
+  fFieldComponents[1] = 0.0;
+  fFieldComponents[2] = 0.0;
+  fFieldComponents[3] = FieldVector.x();
+  fFieldComponents[4] = FieldVector.y();
+  fFieldComponents[5] = FieldVector.z();
 }
 
 G4UniformElectricField_timeCut::G4UniformElectricField_timeCut(G4double vField, G4double vTheta, G4double vPhi)
 {
-    if ((vField < 0) || (vTheta < 0) || (vTheta > pi) || (vPhi < 0) || (vPhi > twopi))
-    {
-        G4Exception("G4UniformElectricField_timeCut::G4UniformElectricField_timeCut()", "GeomField0002", FatalException, "Invalid parameters.");
-    }
+  if ((vField < 0) || (vTheta < 0) || (vTheta > pi) || (vPhi < 0) || (vPhi > twopi))
+  {
+    G4Exception("G4UniformElectricField_timeCut::G4UniformElectricField_timeCut()", "GeomField0002", FatalException, "Invalid parameters.");
+  }
 
-    fFieldComponents[0] = 0.0;
-    fFieldComponents[1] = 0.0;
-    fFieldComponents[2] = 0.0;
-    fFieldComponents[3] = vField * std::sin(vTheta) * std::cos(vPhi);
-    fFieldComponents[4] = vField * std::sin(vTheta) * std::sin(vPhi);
-    fFieldComponents[5] = vField * std::cos(vTheta);
+  fFieldComponents[0] = 0.0;
+  fFieldComponents[1] = 0.0;
+  fFieldComponents[2] = 0.0;
+  fFieldComponents[3] = vField * std::sin(vTheta) * std::cos(vPhi);
+  fFieldComponents[4] = vField * std::sin(vTheta) * std::sin(vPhi);
+  fFieldComponents[5] = vField * std::cos(vTheta);
 }
 
-G4Field *G4UniformElectricField_timeCut::Clone() const
+G4Field * G4UniformElectricField_timeCut::Clone() const
 {
-    return new G4UniformElectricField_timeCut(G4ThreeVector(fFieldComponents[3], fFieldComponents[4], fFieldComponents[5]));
+  return new G4UniformElectricField_timeCut(G4ThreeVector(fFieldComponents[3], fFieldComponents[4], fFieldComponents[5]));
 }
 
 G4UniformElectricField_timeCut::~G4UniformElectricField_timeCut()
+{}
+
+G4UniformElectricField_timeCut& G4UniformElectricField_timeCut::operator=(const G4UniformElectricField_timeCut& p)
 {
-}
-
-G4UniformElectricField_timeCut &G4UniformElectricField_timeCut::operator=(const G4UniformElectricField_timeCut &p)
-{
-    if (&p == this)
-    {
-        return *this;
-    }
-
-    G4ElectricField::operator=(p);
-
-    for (G4int i = 0; i < 6; i++)
-    {
-        fFieldComponents[i] = p.fFieldComponents[i];
-    }
-
+  if (&p == this)
+  {
     return *this;
+  }
+
+  G4ElectricField::operator=(p);
+
+  for (G4int i = 0; i < 6; i++)
+  {
+    fFieldComponents[i] = p.fFieldComponents[i];
+  }
+
+  return *this;
 }
 
 // ------------------------------------------------------------------------
 void G4UniformElectricField_timeCut::GetFieldValue(const G4double pos[4], G4double *fieldBandE) const
 {
+  //     G4double radius_squared = (pos[0]*pos[0]+pos[2]*pos[2])/(km*km);
 
-    //     G4double radius_squared = (pos[0]*pos[0]+pos[2]*pos[2])/(km*km);
-
-    if (std::abs(pos[0]) > settings->EFIELD_XY_HALF_SIZE * km || std::abs(pos[2]) > settings->EFIELD_XY_HALF_SIZE * km || settings->current_efield_status == settings->OFF)
-    {
-        fieldBandE[0] = 0.0;
-        fieldBandE[1] = 0.0;
-        fieldBandE[2] = 0.0;
-        fieldBandE[3] = 0.0;
-        fieldBandE[4] = 0.0;
-        fieldBandE[5] = 0.0;
-    }
-    else
-    {
-        fieldBandE[0] = 0.0;
-        fieldBandE[1] = 0.0;
-        fieldBandE[2] = 0.0;
-        fieldBandE[3] = fFieldComponents[3];
-        fieldBandE[4] = fFieldComponents[4];
-        fieldBandE[5] = fFieldComponents[5];
-    }
+  if ((settings->current_efield_status == settings->efield_OFF) || (std::abs(pos[0]) > EFIELD_XY_HALF_SIZE_mm) || (std::abs(pos[2]) > EFIELD_XY_HALF_SIZE_mm))
+  {
+    fieldBandE[0] = 0.0;
+    fieldBandE[1] = 0.0;
+    fieldBandE[2] = 0.0;
+    fieldBandE[3] = 0.0;
+    fieldBandE[4] = 0.0;
+    fieldBandE[5] = 0.0;
+  }
+  else
+  {
+    fieldBandE[0] = 0.0;
+    fieldBandE[1] = 0.0;
+    fieldBandE[2] = 0.0;
+    fieldBandE[3] = fFieldComponents[3];
+    fieldBandE[4] = fFieldComponents[4];
+    fieldBandE[5] = fFieldComponents[5];
+  }
 }

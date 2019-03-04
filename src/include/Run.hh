@@ -11,20 +11,24 @@ class G4ParticleDefinition;
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class Run : public G4Run
+class Run: public G4Run
 {
 public:
-    Run(DetectorConstruction *);
 
-    ~Run();
+  Run(DetectorConstruction *);
+
+  ~Run();
 
 public:
-    void EndOfRun();
+
+  void EndOfRun();
 
 private:
+
 private:
-    DetectorConstruction *fDetector;
-    G4ParticleDefinition *fParticle;
+
+  DetectorConstruction *fDetector;
+  G4ParticleDefinition *fParticle;
 };
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

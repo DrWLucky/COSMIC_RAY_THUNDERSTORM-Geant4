@@ -9,6 +9,8 @@ execute_process(COMMAND "source ~/.bashrc")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
+#set(Matlab_ROOT_DIR "/scratch/Matlab/R2017b/")
+#find_package(Matlab REQUIRED MX_LIBRARY ENG_LIBRARY MAT_LIBRARY)
 
 #----------------------------------------------------------------------------
 
@@ -24,6 +26,7 @@ else ()
     find_package(Geant4 REQUIRED gdml)
 endif ()
 
+include_directories(${Matlab_INCLUDE_DIRS})
 
 # CADMesh
 #find_package(cadmesh)
@@ -54,7 +57,7 @@ file(GLOB main ${PROJECT_SOURCE_DIR}/src/mos_test.cc)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(mos_test ${main} ${sourcesf} ${sourcesf2} ${sourcesf90} ${sourcesc} ${sourcesc2} ${sourcesh} ${sources} ${headers})
-target_link_libraries(mos_test ${Geant4_LIBRARIES})
+target_link_libraries(mos_test ${Geant4_LIBRARIES} ${Matlab_LIBRARIES})
 #target_link_libraries(fegs_bgo ${cadmesh_LIBRARIES} )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

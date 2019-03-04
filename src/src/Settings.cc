@@ -3,20 +3,20 @@
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 Settings *Settings::instance = nullptr;
 
-Settings *Settings::getInstance()
+Settings * Settings::getInstance()
 {
-    if (instance == nullptr)
-    {
-        instance = new Settings;
-    }
+  if (instance == nullptr)
+  {
+    instance = new Settings;
+  }
 
-    return instance;
-
+  return instance;
 }
+
 //
 //// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//namespace Settings
-//{
+// namespace Settings
+// {
 //
 //    // All these variables are put here to be shared amounts source file
 //    // (not very c++ but easier to implement)
@@ -89,4 +89,4 @@ Settings *Settings::getInstance()
 //    const G4double EFIELD_XY_HALF_SIZE = 8.0;       // km
 //
 //    const bool TIME_EVENT_DURATIONS = false;
-//}
+// }

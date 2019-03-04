@@ -3,49 +3,49 @@
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 ActionInitialization::ActionInitialization(DetectorConstruction *detector) : G4VUserActionInitialization(), fDetector(detector)
-{
-}
+{}
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 ActionInitialization::~ActionInitialization() = default;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::BuildForMaster() const
 {
-    SetUserAction(new RunAction);
+  SetUserAction(new RunAction);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
-    auto *primary = new PrimaryGeneratorAction();
-    SetUserAction(primary);
-    auto *runAction = new RunAction();
-    SetUserAction(runAction);
-    auto *event = new EventAction();
-    SetUserAction(event);
+  auto *primary = new PrimaryGeneratorAction();
 
-    //    if (settings->efield_status == settings->ON)
-    //        {
-    //    G4bool use_stckg_act_tmp = settings->USE_STACKING_ACTION; // variable for debug
+  SetUserAction(primary);
+  auto *runAction = new RunAction();
+  SetUserAction(runAction);
+  auto *event = new EventAction();
+  SetUserAction(event);
 
-    settings->USE_STACKING_ACTION = false;
+  //    if (settings->efield_status == settings->ON)
+  //        {
+  //    G4bool use_stckg_act_tmp = settings->USE_STACKING_ACTION; // variable for debug
 
-    if (settings->USE_STACKING_ACTION)
-    {
-        G4UserStackingAction *stackingAction = new BaseStackingAction();
-        SetUserAction(stackingAction);
-    }
+  settings->USE_STACKING_ACTION = false;
 
-    //        }
+  if (settings->USE_STACKING_ACTION)
+  {
+    G4UserStackingAction *stackingAction = new BaseStackingAction();
+    SetUserAction(stackingAction);
+  }
 
-    //  TrackingAction *trackingAction = new TrackingAction(fDetector);
-    //  SetUserAction(trackingAction);
-    auto *steppingAction = new SteppingAction(fDetector, event);
-    SetUserAction(steppingAction);
+  //        }
+
+  //  TrackingAction *trackingAction = new TrackingAction(fDetector);
+  //  SetUserAction(trackingAction);
+  auto *steppingAction = new SteppingAction(fDetector, event);
+  SetUserAction(steppingAction);
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
