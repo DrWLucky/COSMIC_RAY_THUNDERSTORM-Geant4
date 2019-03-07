@@ -42,7 +42,7 @@ public:
   };
 
   // list of PDG number of particles that we want to generate from parma and be recorded
-  const std::vector < int > PDG_LIST = { pdg_phot, pdg_elec, pdg_posi, pdg_muP, pdg_muN, pdg_neut, pdg_prot };
+  std::vector < int > PDG_LIST = { pdg_phot, pdg_elec, pdg_posi, pdg_muP, pdg_muN, pdg_neut, pdg_prot };
 
   const double WORLD_MAX_ALT = 30;                      // km
 
@@ -67,7 +67,7 @@ public:
   G4long RANDOM_SEED = 250;                  // just initialization, will be replace at beginning of main
 
   //// electric field parameters
-  G4double POTENTIAL_VALUE          = 120.0; // MV, may be override by input argument
+  G4double POTENTIAL_VALUE          = 0.0;   // MV, may be override by input argument
   G4double EFIELD_REGION_LEN        = 2.0;   // km
   G4double EFIELD_REGION_ALT_CENTER = 5.0;   // km
 

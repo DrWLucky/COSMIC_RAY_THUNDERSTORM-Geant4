@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
   G4String Mode                  = "visu"; // visualization (visu) or run
   G4String NB_PARTICLES_TO_SHOOT = "2";
-  G4int    NB_PARTICLES_TO_GET   = 1000;
+  G4int    NB_PARTICLES_TO_GET   = 10;
 
   G4double WT1 = get_wall_time_main();
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
   else
   {
     Mode = "run";
-    settings->RECORD_ALTITUDES.push_back(6.0); // km
+    settings->RECORD_ALTITUDES.push_back(11.0); // km
   }
 
   if (settings->EFIELD_REGION_ALT_CENTER > 20.0)
@@ -159,6 +159,7 @@ int main(int argc, char **argv)
     //                }
 
     analysis->write_output_file_endOf_program();
+    analysis->write_output_MATLAB_file_endOf_program();
 
     //                }
   }

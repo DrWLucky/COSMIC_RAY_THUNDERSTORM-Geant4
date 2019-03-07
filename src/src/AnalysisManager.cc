@@ -124,6 +124,112 @@ void AnalysisManager::add_NB_OUTPUT()
 }
 
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+void AnalysisManager::write_output_MATLAB_file_endOf_program()
+{
+  mxArray *pa1; // since it is a pointer to the beginning of memory block, we need only one (that will change its target)
+  int status;
+  double to_put;
+
+  G4String str_rng = std::to_string(settings->RANDOM_SEED);
+
+  G4String file = "./output_mat/" + str_rng + ".mat";
+
+  G4cout << "Creating file " << file << G4endl;
+  pmat = matOpen(file, "w7.3"); // produces HDF 5 files
+
+  //////
+  long data[1] = { settings->RANDOM_SEED };
+  pa1 = mxCreateNumericMatrix(1, 1, mxINT64_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)data, sizeof(data));
+  status = matPutVariable(pmat, "seed", pa1);
+
+  //////
+  int data2[1] = { settings->NB_EVENT };
+  pa1 = mxCreateNumericMatrix(1, 1, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)data2, sizeof(data2));
+  status = matPutVariable(pmat, "nb_event_total", pa1);
+
+  //////
+  to_put = settings->EFIELD_REGION_ALT_CENTER;
+  pa1    = mxCreateDoubleScalar(to_put);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
+  status = matPutVariable(pmat, "EFIELD_REGION_ALT_CENTER", pa1);
+
+  //////
+  to_put = settings->EFIELD_REGION_LEN;
+  pa1    = mxCreateDoubleScalar(to_put);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
+  status = matPutVariable(pmat, "EFIELD_REGION_LEN", pa1);
+
+  //////
+  to_put = settings->POTENTIAL_VALUE;
+  pa1    = mxCreateDoubleScalar(to_put);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
+  status = matPutVariable(pmat, "POTENTIAL_VALUE", pa1);
+
+  //////
+  to_put = (double)settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED;
+  pa1    = mxCreateDoubleScalar(to_put);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
+  status = matPutVariable(pmat, "RREA_PART_NB_LIMIT_HAS_BEEN_REACHED", pa1);
+
+  //  pa7 = mxCreateDoubleMatrix(1, nbalt_max, mxREAL);
+  //  memcpy((void *)(mxGetPr(pa7)), (void *)&settings->RECORD_ALTITUDES, sizeof(settings->RECORD_ALTITUDES));
+  //  status = matPutVariable(pmat, "RECORD_ALTITUDES", pa7);
+
+  //////
+  int *PDG_LIST = &settings->PDG_LIST[0];
+  pa1 = mxCreateNumericMatrix(1, nbp, mxINT32_CLASS, mxREAL);                                // from vector to array
+  memcpy((void *)(mxGetPr(pa1)), (void *)PDG_LIST, settings->PDG_LIST.size() * sizeof(int)); // size(PDG_LIST) or size(*PDG_LIST) will not work
+                                                                                             // because it can't know the size of the memory chunck
+                                                                                             // the pointer is poiting to
+  status = matPutVariable(pmat, "PDG_LIST", pa1);
+
+  //////
+  pa1 = mxCreateNumericMatrix(nbp, nbalt_max, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&counter_up, sizeof(counter_up));
+  status = matPutVariable(pmat, "counter_up", pa1);
+
+  //////
+  pa1 = mxCreateNumericMatrix(nbp, nbalt_max, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&counter_down, sizeof(counter_down));
+  status = matPutVariable(pmat, "counter_down", pa1);
+
+  //////
+  size_t dims[3];
+  dims[0] = nbp;
+  dims[1] = nbalt_max;
+  dims[2] = ngride;
+  pa1     = mxCreateNumericArray(3, dims, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_SPEC, sizeof(PART_SPEC));
+  status = matPutVariable(pmat, "PART_SPEC", pa1);
+
+  size_t dims_m[3];
+  dims_m[0] = nbp;
+  dims_m[1] = nbalt_max;
+  dims_m[2] = ngridm;
+
+  //////
+  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_X, sizeof(PART_MOM_X));
+  status = matPutVariable(pmat, "PART_MOM_X", pa1);
+
+  //////
+  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_Y, sizeof(PART_MOM_Y));
+  status = matPutVariable(pmat, "PART_MOM_Y", pa1);
+
+  //////
+  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
+  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_Z, sizeof(PART_MOM_Z));
+  status = matPutVariable(pmat, "PART_MOM_Z", pa1);
+
+  matClose(pmat);
+
+  G4cout << "Done" << G4endl;
+}
+
+// ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 void AnalysisManager::write_output_file_endOf_program()
 {
   asciiFile_analysis.open(asciiFileName1, std::ios::out | std::ios::app);
@@ -269,18 +375,46 @@ G4double AnalysisManager::get_scale(const G4double alt)
     20.000000000000000, };
 
   std::vector<G4double> scale_list =
-  { 1.000000000000000,                                                    1.059301380991064,  1.121238177128117, 1.184377838328792, 1.249042145593870,  1.317304778260430,
-    1.388415672913118,                                                    1.463688404983724,
-    1.543377914546100,                                                    1.628371628371629,
-    1.719862833025587,                                                    1.818435364663227,  1.925291598996014, 2.041647095663066, 2.168634624979211,  2.307556184746062,
+  { 1.000000000000000,
+    1.059301380991064,
+    1.121238177128117,
+    1.184377838328792,
+    1.249042145593870,
+    1.317304778260430,
+    1.388415672913118,
+    1.463688404983724,
+    1.543377914546100,
+    1.628371628371629,
+    1.719862833025587,
+    1.818435364663227,
+    1.925291598996014,
+    2.041647095663066,
+    2.168634624979211,
+    2.307556184746062,
     2.460377358490566,
-    2.628502318081032,                                                    2.813376483279396,  3.018518518518519,
-    3.245395719263315,                                                    3.496916063287745,  3.774240231548481, 4.080100125156446, 4.414353419092755,  4.781811514484781,
+    2.628502318081032,
+    2.813376483279396,
+    3.018518518518519,
+    3.245395719263315,
+    3.496916063287745,
+    3.774240231548481,
+    4.080100125156446,
+    4.414353419092755,
+    4.781811514484781,
     5.180770758839889,
-    5.613430908308223,                                                    6.082089552238807,  6.589186457806973,
-    7.133479212253830,                                                    7.720544701006513,  8.348271446862997, 9.024221453287199, 9.753178758414361, 10.541632983023444,
+    5.613430908308223,
+    6.082089552238807,
+    6.589186457806973,
+    7.133479212253830,
+    7.720544701006513,
+    8.348271446862997,
+    9.024221453287199,
+    9.753178758414361,
+    10.541632983023444,
     11.398601398601400,
-    12.325141776937620,                                                  13.334696799263730, 14.431164231961047,
+    12.325141776937620,
+    13.334696799263730,
+    14.431164231961047,
     15.627996164908916, };
 
   if ((alt > 20.) || (alt < 0.))

@@ -231,7 +231,7 @@ void Cosmic_Ray_Generator::generate_samples_from_Parma()
 
   int nb = nb_int;
 
-  int* parmaID_list_wanted2 = &parmaID_list_wanted[0];
+  int *parmaID_list_wanted2 = &parmaID_list_wanted[0]; // from vector to array
 
   gen_parma_cr_(&seed_,
                 output_energies,

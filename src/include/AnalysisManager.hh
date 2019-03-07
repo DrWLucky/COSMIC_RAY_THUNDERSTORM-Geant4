@@ -38,7 +38,10 @@
 #include <stdio.h>
 #include <string.h> /* For strcmp() */
 #include <stdlib.h> /* For EXIT_FAILURE, EXIT_SUCCESS */
-#include <vector> /* For STL */
+#include <vector>   /* For STL */
+
+// #include "H5Cpp.h"
+#include "mat.h"
 
 // #include "g4root.hh"
 // #include "g4xml.hh"
@@ -68,6 +71,7 @@ public:
   static AnalysisManager* getInstance();
 
   void                    write_output_file_endOf_program();
+  void                    write_output_MATLAB_file_endOf_program();
 
   G4int                   NB_OUTPUT() const;
 
@@ -92,12 +96,12 @@ public:
   static const uint nbalt_max = 6;
   static const uint ngride    = 256;
   static const uint ngridm    = 128;
-  uint PART_SPEC[nbp][nbalt_max][ngride];
-  uint PART_MOM_X[nbp][nbalt_max][ngridm];
-  uint PART_MOM_Y[nbp][nbalt_max][ngridm];
-  uint PART_MOM_Z[nbp][nbalt_max][ngridm];
-  uint counter_up[nbp][nbalt_max];
-  uint counter_down[nbp][nbalt_max];
+  int PART_SPEC[nbp][nbalt_max][ngride];
+  int PART_MOM_X[nbp][nbalt_max][ngridm];
+  int PART_MOM_Y[nbp][nbalt_max][ngridm];
+  int PART_MOM_Z[nbp][nbalt_max][ngridm];
+  int counter_up[nbp][nbalt_max];
+  int counter_down[nbp][nbalt_max];
 
 private:
 
@@ -120,6 +124,11 @@ private:
                        G4double                  x,
                        bool                      extrapolate);
 
+  MATFile *pmat;
+
+  ////////////////////////////////////////////////////
+  ///
+  ///
   ////////////////////////////////////////////////////
 
   uint  size_grid_ener = 256;
