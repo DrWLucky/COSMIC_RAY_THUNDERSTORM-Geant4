@@ -4,39 +4,24 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(MOS_test C CXX Fortran)
 enable_language(Fortran)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/src/cmake/modules/) # path to custom .cmake files to find packages (e.g. matio)
+
 execute_process(COMMAND "source ~/.bashrc")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
+#-----------------MATLAB-----------------------------------------------------
 #set(Matlab_ROOT_DIR "/scratch/Matlab/R2017b/")
 #find_package(Matlab REQUIRED MAT_LIBRARY)
-
-set(Matlab_MEX_LIBRARY "${PROJECT_SOURCE_DIR}/src/matlab/bin/glnxa64/libmex.so")
-set(Matlab_MX_LIBRARY "${PROJECT_SOURCE_DIR}/src/matlab/bin/glnxa64/libmx.so")
-set(Matlab_ENG_LIBRARY "${PROJECT_SOURCE_DIR}/src/matlab/bin/glnxa64/libeng.so")
-set(Matlab_MAT_LIBRARY "${PROJECT_SOURCE_DIR}/src/matlab/bin/glnxa64/libmat.so")
-set(Matlab_LIBRARIES
-  ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY}
-  ${Matlab_ENG_LIBRARY} ${Matlab_MAT_LIBRARY})
-
-set(Matlab_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/matlab/extern/include")
-
-#set(HDF5_USE_STATIC_LIBRARIES ON)
-#find_package(HDF5 REQUIRED C CXX)
-#set(HDF5_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/hdf5/include")
-
-#message("\n")
-#message(${HDF5_INCLUDE_DIRS})
-#message("\n")
-#message(${HDF5_LIBRARIES})
-#message("\n")
-message("\n")
-message(${Matlab_INCLUDE_DIRS})
-message("\n")
-message(${Matlab_LIBRARIES})
-message("\n")
+#file(GLOB matlab_headers ${Matlab_INCLUDE_DIRS}/*.h)
+#${Matlab_LIBRARIES}
 #----------------------------------------------------------------------------
+
+#-----------------MATIO-----------------------------------------------------
+# to be able to write matlab output file .mat
+find_package(MATIO REQUIRED) # call to the .cmake script located at ${CMAKE_SOURCE_DIR}/src/cmake/modules/
+file(GLOB matio_headers ${MATIO_INCLUDE_DIR}/*.h)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -81,8 +66,8 @@ file(GLOB matlab_headers ${Matlab_INCLUDE_DIRS}/*.h)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(mos_test ${main} ${matlab_headers} ${sourcesf} ${sourcesf2} ${sourcesf90} ${sourcesc} ${sourcesc2} ${sourcesh} ${sources} ${headers})
-target_link_libraries(mos_test ${Geant4_LIBRARIES} ${Matlab_LIBRARIES})
+add_executable(mos_test ${main} ${matio_headers} ${sourcesf} ${sourcesf2} ${sourcesf90} ${sourcesc} ${sourcesc2} ${sourcesh} ${sources} ${headers})
+target_link_libraries(mos_test ${Geant4_LIBRARIES} ${MATIO_LIBRARY})
 #target_link_libraries(fegs_bgo ${cadmesh_LIBRARIES} )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

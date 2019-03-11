@@ -126,105 +126,31 @@ void AnalysisManager::add_NB_OUTPUT()
 // ....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 void AnalysisManager::write_output_MATLAB_file_endOf_program()
 {
-  mxArray *pa1; // since it is a pointer to the beginning of memory block, we need only one (that will change its target)
-  int status;
-  double to_put;
-
   G4String str_rng = std::to_string(settings->RANDOM_SEED);
+  G4String file    = "./output_mat/" + str_rng + ".mat";
 
-  G4String file = "./output_mat/" + str_rng + ".mat";
+  //  G4String file = "./output_mat/test.mat";
 
   G4cout << "Creating file " << file << G4endl;
-  pmat = matOpen(file, "w7.3"); // produces HDF 5 files
 
-  //////
-  long data[1] = { settings->RANDOM_SEED };
-  pa1 = mxCreateNumericMatrix(1, 1, mxINT64_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)data, sizeof(data));
-  status = matPutVariable(pmat, "seed", pa1);
+  MATLAB_MATIO_output MATLAB_MATIO_outp(file);
 
-  //////
-  int data2[1] = { settings->NB_EVENT };
-  pa1 = mxCreateNumericMatrix(1, 1, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)data2, sizeof(data2));
-  status = matPutVariable(pmat, "nb_event_total", pa1);
+  MATLAB_MATIO_outp.output_scalar(settings->RANDOM_SEED,                         "RANDOM_SEED");
+  MATLAB_MATIO_outp.output_scalar(settings->EFIELD_REGION_ALT_CENTER,            "EFIELD_REGION_ALT_CENTER");
+  MATLAB_MATIO_outp.output_scalar(settings->EFIELD_REGION_LEN,                   "EFIELD_REGION_LEN");
+  MATLAB_MATIO_outp.output_scalar(settings->POTENTIAL_VALUE,                     "POTENTIAL_VALUE");
+  MATLAB_MATIO_outp.output_scalar(settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED, "RREA_PART_NB_LIMIT_HAS_BEEN_REACHED");
 
-  //////
-  to_put = settings->EFIELD_REGION_ALT_CENTER;
-  pa1    = mxCreateDoubleScalar(to_put);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
-  status = matPutVariable(pmat, "EFIELD_REGION_ALT_CENTER", pa1);
+  MATLAB_MATIO_outp.output_vector(settings->RECORD_ALTITUDES, "RECORD_ALTITUDES");
+  MATLAB_MATIO_outp.output_vector(settings->PDG_LIST,         "PDG_LIST");
 
-  //////
-  to_put = settings->EFIELD_REGION_LEN;
-  pa1    = mxCreateDoubleScalar(to_put);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
-  status = matPutVariable(pmat, "EFIELD_REGION_LEN", pa1);
+  MATLAB_MATIO_outp.output_2D_matrix<nbp, nbalt_max>(counter_up,   "counter_up");
+  MATLAB_MATIO_outp.output_2D_matrix<nbp, nbalt_max>(counter_down, "counter_down");
 
-  //////
-  to_put = settings->POTENTIAL_VALUE;
-  pa1    = mxCreateDoubleScalar(to_put);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
-  status = matPutVariable(pmat, "POTENTIAL_VALUE", pa1);
-
-  //////
-  to_put = (double)settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED;
-  pa1    = mxCreateDoubleScalar(to_put);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&to_put, sizeof(to_put));
-  status = matPutVariable(pmat, "RREA_PART_NB_LIMIT_HAS_BEEN_REACHED", pa1);
-
-  //  pa7 = mxCreateDoubleMatrix(1, nbalt_max, mxREAL);
-  //  memcpy((void *)(mxGetPr(pa7)), (void *)&settings->RECORD_ALTITUDES, sizeof(settings->RECORD_ALTITUDES));
-  //  status = matPutVariable(pmat, "RECORD_ALTITUDES", pa7);
-
-  //////
-  int *PDG_LIST = &settings->PDG_LIST[0];
-  pa1 = mxCreateNumericMatrix(1, nbp, mxINT32_CLASS, mxREAL);                                // from vector to array
-  memcpy((void *)(mxGetPr(pa1)), (void *)PDG_LIST, settings->PDG_LIST.size() * sizeof(int)); // size(PDG_LIST) or size(*PDG_LIST) will not work
-                                                                                             // because it can't know the size of the memory chunck
-                                                                                             // the pointer is poiting to
-  status = matPutVariable(pmat, "PDG_LIST", pa1);
-
-  //////
-  pa1 = mxCreateNumericMatrix(nbp, nbalt_max, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&counter_up, sizeof(counter_up));
-  status = matPutVariable(pmat, "counter_up", pa1);
-
-  //////
-  pa1 = mxCreateNumericMatrix(nbp, nbalt_max, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&counter_down, sizeof(counter_down));
-  status = matPutVariable(pmat, "counter_down", pa1);
-
-  //////
-  size_t dims[3];
-  dims[0] = nbp;
-  dims[1] = nbalt_max;
-  dims[2] = ngride;
-  pa1     = mxCreateNumericArray(3, dims, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_SPEC, sizeof(PART_SPEC));
-  status = matPutVariable(pmat, "PART_SPEC", pa1);
-
-  size_t dims_m[3];
-  dims_m[0] = nbp;
-  dims_m[1] = nbalt_max;
-  dims_m[2] = ngridm;
-
-  //////
-  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_X, sizeof(PART_MOM_X));
-  status = matPutVariable(pmat, "PART_MOM_X", pa1);
-
-  //////
-  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_Y, sizeof(PART_MOM_Y));
-  status = matPutVariable(pmat, "PART_MOM_Y", pa1);
-
-  //////
-  pa1 = mxCreateNumericArray(3, dims_m, mxINT32_CLASS, mxREAL);
-  memcpy((void *)(mxGetPr(pa1)), (void *)&PART_MOM_Z, sizeof(PART_MOM_Z));
-  status = matPutVariable(pmat, "PART_MOM_Z", pa1);
-
-  matClose(pmat);
+  MATLAB_MATIO_outp.output_3D_matrix<nbp, nbalt_max, ngride>(PART_SPEC,  "PART_SPEC");
+  MATLAB_MATIO_outp.output_3D_matrix<nbp, nbalt_max, ngridm>(PART_MOM_X, "PART_MOM_X");
+  MATLAB_MATIO_outp.output_3D_matrix<nbp, nbalt_max, ngridm>(PART_MOM_Y, "PART_MOM_Y");
+  MATLAB_MATIO_outp.output_3D_matrix<nbp, nbalt_max, ngridm>(PART_MOM_Z, "PART_MOM_Z");
 
   G4cout << "Done" << G4endl;
 }

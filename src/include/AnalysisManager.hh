@@ -40,8 +40,7 @@
 #include <stdlib.h> /* For EXIT_FAILURE, EXIT_SUCCESS */
 #include <vector>   /* For STL */
 
-// #include "H5Cpp.h"
-#include "mat.h"
+#include "matlab_matio_output.hh"
 
 // #include "g4root.hh"
 // #include "g4xml.hh"
@@ -123,8 +122,6 @@ private:
                        std::vector < G4double >& yData,
                        G4double                  x,
                        bool                      extrapolate);
-
-  MATFile *pmat;
 
   ////////////////////////////////////////////////////
   ///
