@@ -18,6 +18,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 #${Matlab_LIBRARIES}
 #----------------------------------------------------------------------------
 
+#-----------------HDF5------------------------------------------------------
+find_package(HDF5 REQUIRED C) # call to the .cmake script located at ${CMAKE_SOURCE_DIR}/src/cmake/modules/
+file(GLOB hdf5_headers ${HDF5_INCLUDE_DIRS}/*.h)
+
 #-----------------MATIO-----------------------------------------------------
 # to be able to write matlab output file .mat
 find_package(MATIO REQUIRED) # call to the .cmake script located at ${CMAKE_SOURCE_DIR}/src/cmake/modules/
@@ -66,8 +70,8 @@ file(GLOB matlab_headers ${Matlab_INCLUDE_DIRS}/*.h)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(mos_test ${main} ${matio_headers} ${sourcesf} ${sourcesf2} ${sourcesf90} ${sourcesc} ${sourcesc2} ${sourcesh} ${sources} ${headers})
-target_link_libraries(mos_test ${Geant4_LIBRARIES} ${MATIO_LIBRARY})
+add_executable(mos_test ${main} ${hdf5_headers} ${matio_headers} ${sourcesf} ${sourcesf2} ${sourcesf90} ${sourcesc} ${sourcesc2} ${sourcesh} ${sources} ${headers})
+target_link_libraries(mos_test ${Geant4_LIBRARIES} ${HDF5_LIBRARIES} ${MATIO_LIBRARY})
 #target_link_libraries(fegs_bgo ${cadmesh_LIBRARIES} )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
