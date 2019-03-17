@@ -17,7 +17,7 @@ import pandas as pd
 
 computer_name = platform.node()
 
-#### functions definitions
+#### functions definitions for MPI usage (optional)
 
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
@@ -28,32 +28,38 @@ def enum(*sequential, **named):
 
 #efield_altitudes =  [9.,10.,11.,12.,13.,14.]# kilometers, record altitude
 
+# list of altitudes to place the electric field of the different simulations
 efield_altitudes = [6.0]# kilometers, record altitude
 
+# grid og altitudes and corresponding amospheric density scale factors
 altitudes = [4.,      5.,     6.,     7.,     8.,     9.,     10.,     11.,     12.,     13.,      14.,      15.,      16.]
 scales =    [1.5434,  1.7199, 1.9253, 2.1686, 2.4604, 2.8134, 3.2454,  3.7742,  4.4144,  5.1808,   6.0821,   7.1335,   8.3483]
 
+# conversion tu numpy array for extended functionality
 altitudes = np.array(altitudes)
 scales = np.array(scales)
 
+# list of electric field Z sizes to test (Z is altitude direction)
 efield_sizes = [1.0,2.0] # does not matter if efield_altitudes > 20
 
+# potential lsit can be specified as a list (commented out)
 #potential_list = [40., 60., 80. ,100., 120., 140., 160.]
 
+# Here we want to build a potential list to have fraction of the Relativistic Runaway Electron Avalanche threshold
 # 0.284 MV/m
-RREA_thres = 284.0 # MV/km
+RREA_thres = 284.0 # MV/km # at sea level
 frac_rrea_thres_list = np.array([0.0, 0.25, 0.5, 0.75, 1., 1.25, 1.5]) # fraction of RREA threshold
 
+#
 if ("iftrom" in computer_name) or ("7370" in computer_name) or ("sarria-pc" in computer_name):
     nb_run = 1
 else :
     nb_run = 2000
-#potential_list = [200.]
 
+# stop simulation after recording "nb_record_per_run" particles
 nb_record_per_run = 10000
 
 # defining the commands to be run in parallel
-
 commands=[]
 excecutable = './mos_test'
 
@@ -67,7 +73,7 @@ for _ in range(nb_run):
             
             #print(potential_list)
             
-            record_altitudes = [alti_e, alti_e-size/2.0, alti_e+size/2.0]
+            record_altitudes = [alti_e, alti_e-size/2.0, alti_e+size/2.0] # record at center, top and bottom of E-field region
             
             for pot in potential_list:
                 commands.append(excecutable + ' ' + str(nb_record_per_run) 
@@ -79,10 +85,10 @@ for _ in range(nb_run):
 #print(commands[0])
 #############
 
-#######################################
-if ("iftrom" in computer_name) or ("7370" in computer_name) or ("sarria-pc" in computer_name): # local (personal) computer
+####################################### LOCAL RUN (uses python multiprocessing library)
+if ("iftrom" in computer_name) or ("7370" in computer_name): # local (personal) computer
   
-    nb_thread = 2 # number of threads (cpu) to run
+    nb_thread =3 # number of threads (cpu) to run
     
     # Making an array where each element is the list of command for a given thread
 
@@ -95,8 +101,8 @@ if ("iftrom" in computer_name) or ("7370" in computer_name) or ("sarria-pc" in c
         if returncode != 0:
             print("%d command failed: %d" % (i, returncode))
 
-#######################################
-else: # Cluster (fram)
+####################################### COMPUTER CLUSTER RUN (uses MPI)
+else: #
     # MPI initializations and preliminaries
     comm = MPI.COMM_WORLD   # get MPI communicator object
     size = comm.Get_size()       # total number of processes

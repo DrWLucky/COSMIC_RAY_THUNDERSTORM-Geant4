@@ -141,6 +141,9 @@ void AnalysisManager::write_output_MATLAB_file_endOf_program()
   MATLAB_MATIO_outp.output_scalar(settings->POTENTIAL_VALUE,                     "POTENTIAL_VALUE");
   MATLAB_MATIO_outp.output_scalar(settings->RREA_PART_NB_LIMIT_HAS_BEEN_REACHED, "RREA_PART_NB_LIMIT_HAS_BEEN_REACHED");
 
+  MATLAB_MATIO_outp.output_vector(ENER_GRID, "ENERGY_GRID");
+  MATLAB_MATIO_outp.output_vector(MOM_GRID, "MOMENTUM_GRID");
+
   MATLAB_MATIO_outp.output_vector(settings->RECORD_ALTITUDES, "RECORD_ALTITUDES");
   MATLAB_MATIO_outp.output_vector(settings->PDG_LIST,         "PDG_LIST");
 
