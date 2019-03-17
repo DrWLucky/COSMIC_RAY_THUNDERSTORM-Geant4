@@ -9,7 +9,7 @@ contact : <david.sarria@uib.no>
 * Code based on Geant4 (particle propagation in arbitrary materials, with arbitrary electric-fields), NRL-MSISE-00 (atmosphere model) and PARMA (cosmic-ray model) to simulate the effect of thunderstorms electric fields on cosmic ray fluxes (electrons, positrons, muons, photons, etc.).
 * Integrates the [NRL-MSISE-00 model](https://ccmc.gsfc.nasa.gov/pub/modelweb/atmospheric/msis/nrlmsise00/) for the atmosphere and [PARMA](https://phits.jaea.go.jp/expacs/) for the cosmic-ray generator.
 * The code itself mostly uses Geant4 features. See [documentation](http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/ForApplicationDeveloper/html/index.html "Geant4 documentation").
-* Produces an output file in the `.mat` format, that can be loaded not only in Matlab, but also Python (scipy library) and other languages. It contains the recorded spectra for the different particle types and the simulation settings.
+* Produces an output file in the `.mat` format in the folder `build/output_mat`, that can be loaded not only in Matlab, but also Python (scipy library) and other languages. It contains the recorded spectra for the different particle types and the simulation settings. This output is also written as an ASCII file in the folder `build/output` but it is hard to interpret the data inside, and is used only for debugging.
 * Feel free to clone, fork and suggest improvements for the code.
 
 ## Requirements

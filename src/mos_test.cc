@@ -158,7 +158,10 @@ int main(int argc, char **argv)
     //                    UI->ApplyCommand("/run/beamOn 5");
     //                }
 
-    analysis->write_output_file_endOf_program();
+    #ifndef NDEBUG // debug mode
+        analysis->write_output_file_endOf_program();
+    #endif // ifndef NDEBUG
+
     analysis->write_output_MATLAB_file_endOf_program();
 
     //                }
